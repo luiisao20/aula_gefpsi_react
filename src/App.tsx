@@ -1,10 +1,16 @@
+import { Outlet, useMatch } from "react-router";
+
 import "./assets/main.css";
+import { Navbar } from "./components/Navbar";
 
 const App = () => {
+  const match = useMatch('/');
+
   return (
-    <>
-      <h1 className="text-xl text-blue-700">Hola mundo</h1>
-    </>
+    <div>
+      {!match && <Navbar />}
+      <Outlet />
+    </div>
   );
 };
 

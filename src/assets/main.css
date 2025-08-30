@@ -1,2 +1,23 @@
 @import url(./normalize.css);
 @import "tailwindcss";
+
+@import "flowbite/src/themes/default";
+@plugin "flowbite/plugin";
+@source "../../node_modules/flowbite";
+
+@theme {
+  --color-background: #f6f1f1;
+  --color-primary: #146c94;
+  --color-secondary: #19a7ce;
+  --color-tertiary: #63bdca;
+  --color-text: #e1e3e4;
+  --color-danger: #ff1e1e;
+  --color-warning: #ffff00;
+  --color-info: #5463ff;
+  --color-modal: #766457;
+  --color-success: #065f46;
+}
+
+html {
+  background-color: var(--color-background);
+}
