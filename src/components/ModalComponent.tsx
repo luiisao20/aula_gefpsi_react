@@ -1,5 +1,6 @@
 import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import {
+  initFlowbite,
   Modal,
   type InstanceOptions,
   type ModalInterface,
@@ -26,10 +27,12 @@ export interface ModalRef {
 interface Props {
   message: string;
   showButtons?: boolean;
+
+  onAccept?: () => void;
 }
 
 export const ModalComponent = forwardRef<ModalRef, Props>(
-  ({ message, showButtons }, ref) => {
+  ({ message, showButtons, onAccept }, ref) => {
     const [modal, setModal] = useState<ModalInterface>();
 
     useEffect(() => {
@@ -108,6 +111,10 @@ export const ModalComponent = forwardRef<ModalRef, Props>(
       setModal(modalInstance);
     }, []);
 
+    useEffect(() => {
+      initFlowbite();
+    }, []);
+
     useImperativeHandle(ref, () => ({
       show: () => modal?.show(),
       hide: () => modal?.hide(),
@@ -139,6 +146,7 @@ export const ModalComponent = forwardRef<ModalRef, Props>(
               {showButtons && (
                 <div className="flex flex-row gap-4 justify-center">
                   <button
+                    onClick={onAccept}
                     type="button"
                     className="text-white cursor-pointer bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center"
                   >

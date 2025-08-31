@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getModules } from "../../core/database/modules/get-modules.action";
 import type { Module } from "../../interfaces/Module";
 import { createNewModule } from "../../core/database/modules/create-new-module.action";
+import { getModuleInfo } from "../../core/database/modules/get-module-info.action";
 
 export const useModules = () => {
   const queryClient = useQueryClient();
@@ -23,9 +24,19 @@ export const useModules = () => {
     },
 
     onError: (error) => {
-      throw error
+      throw error;
     },
   });
 
   return { modulesQuery, moduleMutation };
+};
+
+export const useModule = (id: string) => {
+  const moduleQuery = useQuery({
+    queryKey: ["module", id],
+    queryFn: () => getModuleInfo(id),
+    staleTime: 1000 * 60 * 60,
+  });
+
+  return { moduleQuery };
 };

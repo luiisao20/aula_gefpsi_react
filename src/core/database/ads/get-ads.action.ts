@@ -1,10 +1,10 @@
-import axios from "axios";
 import type { Notice } from "../../../interfaces/Notice";
+import api from "../../../../api";
 
 export const getAds = async (): Promise<Notice[]> => {
   const notices: Notice[] = [];
   try {
-    const res = await axios.get("http://localhost:5000/ads");
+    const res = await api.get("/ads");
 
     for (const element of res.data) {
       const notice: Notice = {

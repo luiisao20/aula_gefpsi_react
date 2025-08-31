@@ -1,10 +1,10 @@
-import axios from "axios";
 import type { Module } from "../../../interfaces/Module";
+import api from "../../../../api";
 
 export const getModules = async (): Promise<Module[]> => {
   const modules: Module[] = [];
   try {
-    const res = await axios.get("http://localhost:5000/modules");
+    const res = await api.get("/modules");
 
     for (const element of res.data) {
       const module: Module = {

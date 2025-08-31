@@ -1,11 +1,11 @@
-import axios from "axios";
 import type { Category } from "../../../interfaces/Library";
+import api from "../../../../api";
 
 export const getCategories = async (): Promise<Category[]> => {
   const catgories: Category[] = [];
 
   try {
-    const res = await axios.get("http://localhost:5000/library/categories");
+    const res = await api.get("/library/categories");
 
     for (const element of res.data) {
       const notice: Category = {

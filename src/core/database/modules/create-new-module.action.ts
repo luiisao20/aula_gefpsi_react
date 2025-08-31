@@ -1,9 +1,9 @@
-import axios from "axios";
 import type { Module } from "../../../interfaces/Module";
+import api from "../../../../api";
 
 export const createNewModule = async (module: Module): Promise<number> => {
   try {
-    const res = await axios.post("http://localhost:5000/modules", module);
+    const res = await api.post("/modules", module);
     return res.data.id;
   } catch (error) {
     throw error;

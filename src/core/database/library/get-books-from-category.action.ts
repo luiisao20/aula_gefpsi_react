@@ -1,9 +1,9 @@
-import axios from "axios";
 import type { CategoryHasBooks } from "../../../interfaces/Library";
+import api from "../../../../api";
 
 export const getBooksFromCategory = async (id: string): Promise<CategoryHasBooks> => {
   try {
-    const res = await axios.get(`http://localhost:5000/library/${id}`);
+    const res = await api.get(`/library/${id}`);
 
     const response: CategoryHasBooks = {
       category: res.data.category,
