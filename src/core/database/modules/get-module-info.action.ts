@@ -16,6 +16,7 @@ export const getModuleInfo = async (id: string): Promise<Module> => {
       professor: res.data.professor,
       subject: res.data.subject,
       title: res.data.title,
+      status: res.data.status
     };
     return response;
   } catch (error) {

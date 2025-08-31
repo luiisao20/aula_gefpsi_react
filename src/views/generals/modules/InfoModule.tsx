@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useParams } from "react-router";
 import { FaFlagCheckered } from "react-icons/fa6";
 import { RiBookOpenLine } from "react-icons/ri";
 import { MdKeyboardArrowDown } from "react-icons/md";
@@ -6,14 +7,21 @@ import { LuTableOfContents } from "react-icons/lu";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import { initFlowbite } from "flowbite";
 
-import { Colors } from "../assets/colors";
+import { Colors } from "../../../assets/colors";
 import {
   useBibliography,
   useContents,
   useObjectives,
-} from "../presentation/modules/useInfoModules";
-import type { Bibliography, Content, Objective } from "../interfaces/Module";
-import { ModalComponent, type ModalRef } from "./ModalComponent";
+} from "../../../presentation/modules/useInfoModules";
+import type {
+  Bibliography,
+  Content,
+  Objective,
+} from "../../../interfaces/Module";
+import {
+  ModalComponent,
+  type ModalRef,
+} from "../../../components/ModalComponent";
 
 interface ModuleInfo {
   objectives: Objective[];
@@ -27,11 +35,9 @@ interface Inputs {
   bibliography: string;
 }
 
-interface Props {
-  idModule: string;
-}
-
-export const AccordionModule = ({ idModule }: Props) => {
+export const InfoModule = () => {
+  const { id } = useParams();
+  const idModule = `${id}`;
   const [moduleData, setModuleData] = useState<ModuleInfo>({
     objectives: [],
     contents: [],
@@ -166,7 +172,7 @@ export const AccordionModule = ({ idModule }: Props) => {
           >
             <div className="flex gap-4">
               <FaFlagCheckered color={Colors.secondary} />
-              <span>Objetivos del módulo</span>
+              <span>Objetivos</span>
             </div>
             <MdKeyboardArrowDown size={25} />
           </button>
@@ -255,7 +261,7 @@ export const AccordionModule = ({ idModule }: Props) => {
           >
             <div className="flex gap-4">
               <LuTableOfContents color={Colors.secondary} />
-              <span>Contenidos del módulo</span>
+              <span>Contenidos</span>
             </div>
             <MdKeyboardArrowDown size={25} />
           </button>
@@ -344,7 +350,7 @@ export const AccordionModule = ({ idModule }: Props) => {
           >
             <div className="flex gap-4">
               <RiBookOpenLine color={Colors.secondary} />
-              <span>Bibliografía del módulo</span>
+              <span>Bibliografía</span>
             </div>
             <MdKeyboardArrowDown size={25} />
           </button>

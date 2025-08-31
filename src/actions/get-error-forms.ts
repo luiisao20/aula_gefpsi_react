@@ -21,12 +21,9 @@ export const updatePassword = Yup.object().shape({
 });
 
 export const moduleForm = Yup.object().shape({
-  title: Yup.string()
-    .matches(regex.text)
-    .required("El título es obligatorio"),
+  title: Yup.string().matches(regex.text).required("El título es obligatorio"),
 
-  number: Yup.number()
-    .required("El número del módulo es obligatorio"),
+  number: Yup.number().required("El número del módulo es obligatorio"),
 
   professor: Yup.string()
     .matches(regex.text)
@@ -35,4 +32,12 @@ export const moduleForm = Yup.object().shape({
   subject: Yup.string()
     .matches(regex.text)
     .required("La materia es obligatoria"),
+});
+
+export const taskForm = Yup.object().shape({
+  title: Yup.string().required("El título es un campo obligatorio"),
+
+  dueDate: Yup.date().required("La fecha es un campo obligatorio"),
+
+  instructions: Yup.string().required("La descripción es un campo obligatorio"),
 });

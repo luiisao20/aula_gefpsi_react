@@ -9,14 +9,16 @@ import {
 import { Formik } from "formik";
 import { BiError } from "react-icons/bi";
 import { IoClose } from "react-icons/io5";
+import { IoMdAddCircle } from "react-icons/io";
 
 import { Colors } from "../assets/colors";
-import { IoMdAddCircle } from "react-icons/io";
-import type { Module } from "../interfaces/Module";
+import type { Module, Task } from "../interfaces/Module";
 import { CustomErrorMessage } from "./CustomErrorMessage";
-import { moduleForm } from "../actions/get-error-forms";
+import { moduleForm, taskForm } from "../actions/get-error-forms";
 import { useModules } from "../presentation/modules/useModules";
 import { MessageForm } from "./MessageForm";
+import { CustomDatePicker } from "./DatePicker";
+import { useTasks } from "../presentation/modules/useTasks";
 
 export interface ModalRef {
   show: () => void;
@@ -27,12 +29,13 @@ export interface ModalRef {
 interface Props {
   message: string;
   showButtons?: boolean;
+  loading?: boolean;
 
   onAccept?: () => void;
 }
 
 export const ModalComponent = forwardRef<ModalRef, Props>(
-  ({ message, showButtons, onAccept }, ref) => {
+  ({ message, showButtons, loading, onAccept }, ref) => {
     const [modal, setModal] = useState<ModalInterface>();
 
     useEffect(() => {
@@ -146,13 +149,15 @@ export const ModalComponent = forwardRef<ModalRef, Props>(
               {showButtons && (
                 <div className="flex flex-row gap-4 justify-center">
                   <button
+                    disabled={loading}
                     onClick={onAccept}
                     type="button"
                     className="text-white cursor-pointer bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center"
                   >
-                    Yes, I'm sure
+                    {loading ? "Cargando" : "Yes, I'm sure"}
                   </button>
                   <button
+                    onClick={() => modal?.hide()}
                     type="button"
                     className="py-2.5 px-5 cursor-pointer ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100"
                   >
@@ -399,3 +404,206 @@ export const ModalForm = forwardRef<ModalRef, PropsCrud>((_, ref) => {
 });
 
 ModalForm.displayName = "ModalForm";
+
+interface TaskCrud {
+  moduleId: string;
+}
+
+export const ModalTask = forwardRef<ModalRef, TaskCrud>(({ moduleId }, ref) => {
+  const [modal, setModal] = useState<ModalInterface>();
+  const task: Task = {
+    title: "",
+    dueDate: new Date(),
+    instructions: "",
+    idModule: moduleId,
+    publishedDate: new Date(),
+  };
+  const { tasksMutation } = useTasks(moduleId);
+  const [alertForm, setAlertForm] = useState<{
+    show: boolean;
+    message?: string;
+    success: boolean;
+  }>({
+    show: false,
+    message: "La tarea ha sido creada correctamente!",
+    success: false,
+  });
+
+  useEffect(() => {
+    const $modalCrud: HTMLElement | null =
+      document.querySelector("#crud-modal");
+
+    const modalOptions: ModalOptions = {
+      placement: "center",
+      backdrop: "dynamic",
+      backdropClasses:
+        "bg-gray-900/50 fixed inset-0 z-40 transition-all duration-300 ease-out",
+      closable: true,
+      onShow: () => {},
+      onHide: () => {},
+    };
+
+    const instanceOptions: InstanceOptions = {
+      id: "modal-crud",
+      override: true,
+    };
+
+    const modalInstance = new Modal($modalCrud, modalOptions, instanceOptions);
+
+    setModal(modalInstance);
+  }, []);
+
+  useImperativeHandle(ref, () => ({
+    show: () => modal?.show(),
+    hide: () => modal?.hide(),
+    toggle: () => modal?.toggle(),
+  }));
+
+  return (
+    <div
+      id="crud-modal"
+      tabIndex={-1}
+      aria-hidden="true"
+      className="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full"
+    >
+      <div className="relative bg-white w-2/5 rounded-lg shadow-sm">
+        <div className="relative p-4 w-full max-h-full">
+          <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t border-gray-200">
+            <h3 className="text-lg font-semibold text-gray-900">
+              Crear una nueva tarea para el módulo
+            </h3>
+            <button
+              type="button"
+              className="text-gray-400 cursor-pointer bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center"
+              onClick={() => modal?.hide()}
+            >
+              <IoClose size={30} />
+              <span className="sr-only">Close modal</span>
+            </button>
+          </div>
+          <Formik
+            initialValues={task}
+            validationSchema={taskForm}
+            onSubmit={async (formLike, { setSubmitting, resetForm }) => {
+              try {
+                await tasksMutation.mutateAsync(formLike);
+                setAlertForm((prev) => ({
+                  ...prev,
+                  success: true,
+                  show: true,
+                }));
+                resetForm();
+              } catch (error: any) {
+                setAlertForm({
+                  show: true,
+                  message: error.message,
+                  success: false,
+                });
+              } finally {
+                setSubmitting(false);
+              }
+            }}
+          >
+            {({
+              values,
+              errors,
+              touched,
+              isSubmitting,
+
+              handleSubmit,
+              handleChange,
+              handleBlur,
+              setFieldValue,
+            }) => (
+              <>
+                <div className="flex flex-col gap-2 mb-4">
+                  <div>
+                    <label
+                      htmlFor="title"
+                      className="block mb-2 text-sm font-medium text-gray-900"
+                    >
+                      Título
+                    </label>
+                    <input
+                      type="text"
+                      name="title"
+                      id="title"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary/60 focus:border-primary/60 block w-full p-2.5"
+                      placeholder="Escribe el título de la tarea"
+                      value={values.title}
+                      onChange={handleChange("title")}
+                      onBlur={handleBlur("title")}
+                    />
+                    <CustomErrorMessage
+                      name="title"
+                      errors={errors}
+                      touched={touched}
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="dueDate"
+                      className="block mb-2 text-sm font-medium text-gray-900"
+                    >
+                      Fecha límite
+                    </label>
+                    <CustomDatePicker
+                      selected={values.dueDate}
+                      onChange={(date) => setFieldValue("dueDate", date)}
+                    />
+                    <CustomErrorMessage
+                      name="dueDate"
+                      errors={errors}
+                      touched={touched}
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="instructions"
+                      className="block mb-2 text-sm font-medium text-gray-900"
+                    >
+                      Instrucciones
+                    </label>
+                    <textarea
+                      id="instructions"
+                      rows={4}
+                      className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary/60 focus:border-primary/60"
+                      placeholder="Escribe las instrucciones para la tarea"
+                      value={values.instructions}
+                      onChange={handleChange("instructions")}
+                      onBlur={handleBlur("instructions")}
+                    ></textarea>
+                    <CustomErrorMessage
+                      name="instructions"
+                      errors={errors}
+                      touched={touched}
+                    />
+                  </div>
+                </div>
+                {alertForm.show && (
+                  <MessageForm
+                    isSuccess={alertForm.success}
+                    message={alertForm.message!}
+                  />
+                )}
+                <button
+                  disabled={isSubmitting}
+                  onClick={() => handleSubmit()}
+                  type="submit"
+                  className={`text-white inline-flex items-center bg-secondary hover:bg-secondary/60 cursor-pointer focus:ring-4 focus:outline-none focus:ring-secondary/30 font-medium rounded-lg text-sm px-5 py-2.5 text-center ${
+                    isSubmitting && "cursor-progress"
+                  }`}
+                >
+                  <IoMdAddCircle className="mr-4" size={20} />
+                  Agregar nuevo módulo
+                </button>
+              </>
+            )}
+          </Formik>
+        </div>
+      </div>
+    </div>
+  );
+});
+
+ModalTask.displayName = "ModalTask";

@@ -4,6 +4,7 @@ export interface Module {
   number: number;
   professor: string;
   subject: string;
+  status?: boolean;
 }
 
 export interface Objective {
@@ -22,4 +23,14 @@ export interface Bibliography {
   id?: number;
   reference: string;
   idModule: number;
+}
+
+export interface Task {
+  id?: number;
+  title: string;
+  dueDate: Date;
+  instructions: string;
+  publishedDate: Date;
+  idModule: string;
+  status?: boolean;
 }

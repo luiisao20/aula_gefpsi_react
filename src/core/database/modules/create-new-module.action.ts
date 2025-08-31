@@ -9,3 +9,12 @@ export const createNewModule = async (module: Module): Promise<number> => {
     throw error;
   }
 };
+
+export const publishModule = async (id: string, value: boolean) => {
+  try {
+    const res = await api.put(`/modules/${id}`, { value });
+    return res.data;
+  } catch (error) {
+    throw error;
+  }
+};

@@ -1,6 +1,5 @@
-import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState, type InputHTMLAttributes } from "react";
+import { FaEye, FaEyeSlash } from "react-icons/fa6";
 
 interface Props extends InputHTMLAttributes<HTMLInputElement> {
   password: string;
@@ -19,13 +18,11 @@ export const InputPassword = ({ changeText, password, ...rest }: Props) => {
         className="bg-gray-50 border border-gray-300 text-gray-900 rounded-l-lg focus:ring-primary-600 focus:border-primary/60 block w-full p-2.5"
         onChange={(e) => changeText(e.target.value)}
       />
-      <div className="bg-gray-50 border border-gray-300 px-2 rounded-r-lg cursor-pointer place-self-stretch flex items-center">
-        <FontAwesomeIcon
-          onClick={() => setShowPassword(!showPassword)}
-          icon={showPassword ? faEyeSlash : faEye}
-          size="lg"
-          className=""
-        />
+      <div
+        onClick={() => setShowPassword(!showPassword)}
+        className="bg-gray-50 border text-primary border-gray-300 px-2 rounded-r-lg cursor-pointer place-self-stretch flex items-center"
+      >
+        {!showPassword ? <FaEye size={20} /> : <FaEyeSlash size={20} />}
       </div>
     </div>
   );
