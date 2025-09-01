@@ -21,7 +21,7 @@ export const ModuleScreen = () => {
       <h2 className="text-2xl text-center font-semibold text-secondary">
         Módulo: {dataModule?.number}
       </h2>
-      <div className="flex justify-between items-start">
+      <div className="flex flex-col md:flex-row justify-between items-start">
         <div className="m-4">
           <h2 className="text-lg">
             <span className="font-semibold text-primary">Materia:</span>{" "}

@@ -34,3 +34,33 @@ export interface Task {
   idModule: string;
   status?: boolean;
 }
+
+export interface Exam {
+  id?: number;
+  idModule: number;
+  dueDate?: Date;
+  status?: boolean;
+}
+
+export interface ExamType {
+  id: number;
+  type: string;
+}
+
+export interface Question {
+  id?: number;
+  text: string;
+  idExam: number;
+  idType: number;
+}
+
+export interface Option {
+  id?: number;
+  text: string;
+  isCorrect: boolean;
+  idQuestion?: string;
+}
+
+export interface QuestionWithOptions extends Question {
+  options: Option[];
+}

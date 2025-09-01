@@ -14,7 +14,7 @@ export const GeneralScreen = () => {
   return (
     <>
       <Sidebar routes={routes} />
-      <div className="mt-20 mb-5 w-1/2 mx-auto bg-white py-2 px-4 rounded-xl">
+      <div className="mt-20 mb-5 md:w-1/2 md:mx-auto bg-white py-2 md:px-4 px-1 rounded-xl mx-1">
         <Outlet />
       </div>
     </>

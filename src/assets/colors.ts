@@ -8,4 +8,5 @@ export const Colors = {
   warning: "#ffff00",
   info: "#5463ff",
   modal: "#766457",
+  success: '#065f46'
 };
