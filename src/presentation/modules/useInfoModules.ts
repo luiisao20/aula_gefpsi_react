@@ -1,15 +1,22 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+
 import {
   getBibliographyByModule,
   getContentsByModule,
+  getExtraContentByModule,
   getObjectivesByModule,
+  getVideoConferenceByModule,
 } from "../../core/database/modules/get-module-info.action";
+
 import {
   insertBibliographyByModule,
   insertContentsByModule,
+  insertExtraContentByModule,
   insertObjectivesByModule,
+  insertVideoConferenceByModule,
 } from "../../core/database/modules/insert-info-by-module.action";
 import { deleteInfoFromModule } from "../../core/database/modules/delete-info-by-modules.action";
+import type {ExtraContent} from "../../interfaces/Module";
 
 export const useObjectives = (idModule: string) => {
   const queryClient = useQueryClient();
@@ -29,7 +36,7 @@ export const useObjectives = (idModule: string) => {
       queryClient.invalidateQueries({
         queryKey: ["objectives", idModule],
       });
-      console.log(response.message);
+      alert(response.message);
     },
 
     onError: (error: any) => {
@@ -60,23 +67,23 @@ export const useObjectives = (idModule: string) => {
 
 export const useContents = (idModule: string) => {
   const queryClient = useQueryClient();
-  const contentsQuery = useQuery({
-    queryKey: ["contents", idModule],
+
+  const contentQuery = useQuery({
+    queryKey: ["content", idModule],
     queryFn: () => getContentsByModule(idModule),
     enabled: false,
     staleTime: 1000 * 60 * 60,
   });
 
   const contentMutation = useMutation({
-    mutationFn: async (data: string[]) =>
-      insertContentsByModule(idModule, data),
+    mutationFn: async (data: string) => insertContentsByModule(idModule, data),
 
     onSuccess: (response) => {
       queryClient.invalidateQueries({
-        queryKey: ["contents", idModule],
+        queryKey: ["content", idModule],
       });
-
-      console.log(response.message);
+      contentQuery.refetch();
+      alert(response.message);
     },
 
     onError: (error: any) => {
@@ -90,10 +97,10 @@ export const useContents = (idModule: string) => {
 
     onSuccess: (response) => {
       queryClient.invalidateQueries({
-        queryKey: ["contents", idModule],
+        queryKey: ["content", idModule],
       });
-      contentsQuery.refetch();
-      console.log(response.message);
+      contentQuery.refetch();
+      alert(response.message);
     },
 
     onError: (error: any) => {
@@ -102,7 +109,7 @@ export const useContents = (idModule: string) => {
     },
   });
 
-  return { contentsQuery, contentMutation, deleteContentMutation };
+  return { contentQuery, contentMutation, deleteContentMutation };
 };
 
 export const useBibliography = (idModule: string) => {
@@ -124,7 +131,7 @@ export const useBibliography = (idModule: string) => {
         queryKey: ["bibliography", idModule],
       });
 
-      console.log(response.message);
+      alert(response.message);
     },
 
     onError: (error: any) => {
@@ -140,7 +147,7 @@ export const useBibliography = (idModule: string) => {
       queryClient.invalidateQueries({
         queryKey: ["bibliography", idModule],
       });
-      bibliographyQuery.refetch()
+      bibliographyQuery.refetch();
       console.log(response.message);
     },
 
@@ -154,5 +161,108 @@ export const useBibliography = (idModule: string) => {
     bibliographyQuery,
     bibliographyMutation,
     deleteBibliographyMutation,
+  };
+};
+
+export const useVideoConference = (idModule: string) => {
+  const queryClient = useQueryClient();
+
+  const videoConferenceQuery = useQuery({
+    queryKey: ["videoConference", idModule],
+    queryFn: () => getVideoConferenceByModule(idModule),
+    enabled: false,
+    staleTime: 1000 * 60 * 60,
+  });
+
+  const videoConferenceMutation = useMutation({
+    mutationFn: async (url: string) =>
+      insertVideoConferenceByModule(idModule, url),
+
+    onSuccess: (response) => {
+      queryClient.invalidateQueries({
+        queryKey: ["videoConference", idModule],
+      });
+      videoConferenceQuery.refetch();
+      alert(response.message);
+    },
+
+    onError: (error: any) => {
+      const message = error.response?.data?.error || "Error desconocido";
+      console.log(message);
+    },
+  });
+
+  const deleteVideoConferenceMutation = useMutation({
+    mutationFn: deleteInfoFromModule,
+
+    onSuccess: (response) => {
+      queryClient.invalidateQueries({
+        queryKey: ["videoConference", idModule],
+      });
+      videoConferenceQuery.refetch();
+      console.log(response.message);
+    },
+
+    onError: (error: any) => {
+      const message = error.response?.data?.error || "Error desconocido";
+      console.log(message);
+    },
+  });
+
+  return {
+    videoConferenceQuery,
+    videoConferenceMutation,
+    deleteVideoConferenceMutation,
+  };
+};
+
+export const useExtraContent = (idModule: string) => {
+  const queryClient = useQueryClient();
+
+  const extraContentQuery = useQuery({
+    queryKey: ["extraContent", idModule],
+    queryFn: () => getExtraContentByModule(idModule),
+    enabled: false,
+    staleTime: 1000 * 60 * 60,
+  });
+
+  const extraContentMutation = useMutation({
+    mutationFn: async (data: ExtraContent[]) =>
+      insertExtraContentByModule(idModule, data),
+
+    onSuccess: (response) => {
+      queryClient.invalidateQueries({
+        queryKey: ["extraContent", idModule],
+      });
+      extraContentQuery.refetch();
+      alert(response.message);
+    },
+
+    onError: (error: any) => {
+      const message = error.response?.data?.error || "Error desconocido";
+      console.log(message);
+    },
+  });
+
+  const deleteExtraContentMutation = useMutation({
+    mutationFn: deleteInfoFromModule,
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["extraContent", idModule],
+      });
+      extraContentQuery.refetch();
+    },
+
+    onError: (error: any) => {
+      const message = error.response?.data?.error || "Error desconocido";
+      console.log(message);
+    },
+  });
+
+  return {
+    extraContentMutation,
+    extraContentQuery,
+    deleteExtraContentMutation,
   };
 };

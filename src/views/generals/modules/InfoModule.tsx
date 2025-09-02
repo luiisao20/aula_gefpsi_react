@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router";
-import { FaFlagCheckered } from "react-icons/fa6";
+import { FaVideo } from "react-icons/fa6";
 import { RiBookOpenLine } from "react-icons/ri";
-import { MdKeyboardArrowDown } from "react-icons/md";
+import { MdDeleteForever, MdKeyboardArrowDown } from "react-icons/md";
 import { LuTableOfContents } from "react-icons/lu";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import { initFlowbite } from "flowbite";
@@ -11,67 +11,98 @@ import { Colors } from "../../../assets/colors";
 import {
   useBibliography,
   useContents,
-  useObjectives,
+  useExtraContent,
+  useVideoConference,
 } from "../../../presentation/modules/useInfoModules";
 import type {
   Bibliography,
   Content,
+  ExtraContent,
   Objective,
+  VideoConference,
 } from "../../../interfaces/Module";
 import {
   ModalComponent,
   type ModalRef,
 } from "../../../components/ModalComponent";
+import { CiTextAlignLeft } from "react-icons/ci";
 
 interface ModuleInfo {
   objectives: Objective[];
-  contents: Content[];
+  content?: Content;
   bibliographies: Bibliography[];
+  videoConference?: VideoConference;
+  extraContent: ExtraContent[];
 }
 
 interface Inputs {
   objective: string;
   content: string;
   bibliography: string;
+  url: string;
+}
+
+interface ExtraContentInput {
+  description: string;
+  url: string;
 }
 
 export const InfoModule = () => {
   const { id } = useParams();
   const idModule = `${id}`;
+
   const [moduleData, setModuleData] = useState<ModuleInfo>({
     objectives: [],
-    contents: [],
     bibliographies: [],
+    extraContent: [],
   });
   const [moduleInputs, setModuleInputs] = useState<Inputs>({
     objective: "",
     content: "",
     bibliography: "",
+    url: "",
   });
+  const [extraContent, setExtraContent] = useState<ExtraContentInput>({
+    description: "",
+    url: "",
+  });
+
   const modalRef = useRef<ModalRef>(null);
-  const { objectivesQuery, objectiveMutation, deleteObjectiveMutation } =
-    useObjectives(idModule);
-  const { contentsQuery, contentMutation, deleteContentMutation } =
+
+  const {
+    videoConferenceQuery,
+    videoConferenceMutation,
+    deleteVideoConferenceMutation,
+  } = useVideoConference(idModule);
+  const { contentQuery, contentMutation, deleteContentMutation } =
     useContents(idModule);
   const {
     bibliographyQuery,
     bibliographyMutation,
     deleteBibliographyMutation,
   } = useBibliography(idModule);
+  const {
+    deleteExtraContentMutation,
+    extraContentMutation,
+    extraContentQuery,
+  } = useExtraContent(idModule);
 
   useEffect(() => {
     initFlowbite();
   }, []);
 
   useEffect(() => {
-    if (objectivesQuery.data)
-      setModuleData((prev) => ({ ...prev, objectives: objectivesQuery.data }));
-  }, [objectivesQuery.data]);
+    if (videoConferenceQuery.data)
+      setModuleData((prev) => ({
+        ...prev,
+        videoConference: videoConferenceQuery.data,
+      }));
+  }, [videoConferenceQuery.data]);
 
   useEffect(() => {
-    if (contentsQuery.data)
-      setModuleData((prev) => ({ ...prev, contents: contentsQuery.data }));
-  }, [contentsQuery.data]);
+    if (contentQuery.data)
+      setModuleData((prev) => ({ ...prev, content: contentQuery.data }));
+  }, [contentQuery.data]);
 
   useEffect(() => {
     if (bibliographyQuery.data)
@@ -81,21 +112,13 @@ export const InfoModule = () => {
       }));
   }, [bibliographyQuery.data]);
 
-  const handleUpdateObjectives = async () => {
-    const newArray: string[] = moduleData.objectives
-      .filter((item) => !item.id)
-      .map((item) => item.description);
-
-    objectiveMutation.mutate(newArray);
-  };
-
-  const handleUpdateContents = async () => {
-    const newArray: string[] = moduleData.contents
-      .filter((item) => !item.id)
-      .map((item) => item.topic);
-
-    contentMutation.mutate(newArray);
-  };
+  useEffect(() => {
+    if (extraContentQuery.data)
+      setModuleData((prev) => ({
+        ...prev,
+        extraContent: extraContentQuery.data,
+      }));
+  }, [extraContentQuery.data]);
 
   const handleUpdateBibliography = async () => {
     const newArray: string[] = moduleData.bibliographies
@@ -105,32 +128,15 @@ export const InfoModule = () => {
     bibliographyMutation.mutate(newArray);
   };
 
-  const handleDeleteObjective = (id?: number) => {
-    if (!id) {
-      setModuleData((prev) => ({
-        ...prev,
-        objectives: prev.objectives.filter((item) => item.id !== id),
+  const handleUpdateExtraContent = async () => {
+    const newArray: ExtraContent[] = moduleData.extraContent
+      .filter((item) => !item.id)
+      .map((item) => ({
+        description: item.description,
+        url: item.url,
       }));
-    } else {
-      deleteObjectiveMutation.mutate({
-        id: id.toString(),
-        options: 1,
-      });
-    }
-  };
 
-  const handleDeleteContent = (id?: number) => {
-    if (!id) {
-      setModuleData((prev) => ({
-        ...prev,
-        contents: prev.contents.filter((item) => item.id !== id),
-      }));
-    } else {
-      deleteContentMutation.mutate({
-        id: id.toString(),
-        options: 2,
-      });
-    }
+    extraContentMutation.mutate(newArray);
   };
 
   const handleDeleteBibliography = async (id?: number) => {
@@ -143,6 +149,21 @@ export const InfoModule = () => {
       await deleteBibliographyMutation.mutateAsync({
         id: id.toString(),
         options: 3,
+      });
+      modalRef.current?.show();
+    }
+  };
+
+  const handleDeleteExtraContent = async (id?: number) => {
+    if (!id) {
+      setModuleData((prev) => ({
+        ...prev,
+        extraContent: prev.extraContent.filter((item) => item.id !== id),
+      }));
+    } else {
+      await deleteExtraContentMutation.mutateAsync({
+        id: id.toString(),
+        options: 5,
       });
       modalRef.current?.show();
     }
@@ -164,15 +185,15 @@ export const InfoModule = () => {
         <h2 id="accordion-flush-heading-1">
           <button
             type="button"
-            onClick={() => objectivesQuery.refetch()}
+            onClick={() => videoConferenceQuery.refetch()}
             className="flex items-center justify-between w-full py-5 font-medium rtl:text-right text-gray-500 border-b border-gray-200 gap-3"
             data-accordion-target="#accordion-flush-body-1"
             aria-expanded="false"
             aria-controls="accordion-flush-body-1"
           >
             <div className="flex gap-4">
-              <FaFlagCheckered color={Colors.secondary} />
-              <span>Objetivos</span>
+              <FaVideo color={Colors.secondary} />
+              <span>VideoConferencia</span>
             </div>
             <MdKeyboardArrowDown size={25} />
           </button>
@@ -183,68 +204,63 @@ export const InfoModule = () => {
           aria-labelledby="accordion-flush-heading-1"
         >
           <div className="py-5 border-b border-gray-200">
-            <div className="mx-4 flex gap-2 items-center">
-              <div className="relative z-0 w-full mb-5 group">
-                <input
-                  type="email"
-                  name="floating_email"
-                  id="floating_email"
-                  className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-secondary peer"
-                  placeholder=" "
-                  value={moduleInputs.objective}
-                  onChange={(e) =>
-                    setModuleInputs((prev) => ({
-                      ...prev,
-                      objective: e.target.value,
-                    }))
-                  }
-                />
-                <label
-                  htmlFor="floating_email"
-                  className="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-secondary peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-                >
-                  Ingresa un objetivo
-                </label>
-              </div>
-              <IoMdAddCircleOutline
-                className="cursor-pointer text-secondary hover:text-secondary/60"
-                onClick={() => {
-                  const newObjective: Objective = {
-                    description: moduleInputs.objective,
-                    idModule: parseInt(idModule),
-                  };
-                  if (moduleInputs.objective.trim() !== "") {
-                    setModuleData((prev) => ({
-                      ...prev,
-                      objectives: [...prev.objectives, newObjective],
-                    }));
-                    setModuleInputs((prev) => ({ ...prev, objective: "" }));
-                  }
-                }}
-                size={30}
-              />
-            </div>
-            {moduleData.objectives.length > 0 && (
-              <div className="flex flex-col">
-                <p className="text-xs text-primary mb-4">
-                  Para eliminar un objetivo, da click sobre el mismo
-                </p>
-                <ol className="space-y-2 mx-4 list-[lower-roman] list-inside">
-                  {moduleData.objectives.map((objective, index) => (
-                    <li
-                      className="opacity-100 translate-y-0 transition-all duration-300 ease-out"
-                      onClick={() => handleDeleteObjective(objective.id)}
-                      key={index}
-                    >
-                      <span>{objective.description}</span>
-                    </li>
-                  ))}
-                </ol>
+            {moduleData.videoConference?.id ? (
+              <div className="mx-4 flex justify-between items-center">
+                <h2>
+                  Enlace a la vídeo conferencia:{" "}
+                  <span
+                    onClick={() =>
+                      window.open(moduleData.videoConference?.url, "_blank")
+                    }
+                    className="text-secondary underline underline-offset-2 cursor-pointer"
+                  >
+                    Link
+                  </span>
+                </h2>
                 <button
-                  onClick={handleUpdateObjectives}
-                  className="bg-secondary text-white my-4 p-2 rounded-xl place-self-end hover:bg-secondary/60 cursor-pointer"
+                  disabled={deleteVideoConferenceMutation.isPending}
+                  onClick={() =>
+                    deleteVideoConferenceMutation.mutate({
+                      options: 4,
+                      id: moduleData.videoConference?.id?.toString()!,
+                    })
+                  }
+                  className="cursor-pointer"
                 >
-                  Actualizar Objetivos
+                  <MdDeleteForever className="text-3xl text-danger" />
+                </button>
+              </div>
+            ) : (
+              <div className="mx-4 flex flex-col">
+                <div className="relative z-0 w-full mb-5 group">
+                  <input
+                    type="text"
+                    name="floating_video_conference"
+                    id="floating_video_conference"
+                    className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-secondary peer"
+                    placeholder=" "
+                    value={moduleInputs.url}
+                    onChange={(e) =>
+                      setModuleInputs((prev) => ({
+                        ...prev,
+                        url: e.target.value,
+                      }))
+                    }
+                  />
+                  <label
+                    htmlFor="floating_video_conference"
+                    className="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-secondary peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                  >
+                    Ingresa el link de la vídeo conferencia
+                  </label>
+                </div>
+                <button
+                  onClick={() =>
+                    videoConferenceMutation.mutate(moduleInputs.url)
+                  }
+                  className="place-self-end p-2 bg-secondary hover:bg-secondary/60 rounded-xl text-white font-semibold cursor-pointer"
+                >
+                  Agregar
                 </button>
               </div>
             )}
@@ -253,15 +269,15 @@ export const InfoModule = () => {
         <h2 id="accordion-flush-heading-2">
           <button
             type="button"
-            onClick={() => contentsQuery.refetch()}
+            onClick={() => contentQuery.refetch()}
             className="flex items-center justify-between w-full py-5 font-medium rtl:text-right text-gray-500 border-b border-gray-200 gap-3"
             data-accordion-target="#accordion-flush-body-2"
             aria-expanded="false"
             aria-controls="accordion-flush-body-2"
           >
             <div className="flex gap-4">
-              <LuTableOfContents color={Colors.secondary} />
-              <span>Contenidos</span>
+              <CiTextAlignLeft color={Colors.secondary} />
+              <span>Resumen</span>
             </div>
             <MdKeyboardArrowDown size={25} />
           </button>
@@ -271,82 +287,187 @@ export const InfoModule = () => {
           className="hidden"
           aria-labelledby="accordion-flush-heading-2"
         >
-          <div className="py-5 border-b border-gray-200">
-            <div className="mx-4 flex gap-2 items-center">
-              <div className="relative z-0 w-full mb-5 group">
-                <input
-                  type="email"
-                  name="floating_email"
-                  id="floating_email"
-                  className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-secondary peer"
-                  placeholder=" "
-                  value={moduleInputs.content}
-                  onChange={(e) =>
-                    setModuleInputs((prev) => ({
-                      ...prev,
-                      content: e.target.value,
-                    }))
-                  }
-                />
-                <label
-                  htmlFor="floating_email"
-                  className="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-secondary peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-                >
-                  Ingresa un contenido
-                </label>
-              </div>
-              <IoMdAddCircleOutline
-                className="cursor-pointer text-secondary hover:text-secondary/60"
-                onClick={() => {
-                  const newContent: Content = {
-                    topic: moduleInputs.content,
-                    idModule: parseInt(idModule),
-                  };
-                  if (moduleInputs.content.trim() !== "") {
-                    setModuleData((prev) => ({
-                      ...prev,
-                      contents: [...prev.contents, newContent],
-                    }));
-                    setModuleInputs((prev) => ({ ...prev, content: "" }));
-                  }
-                }}
-                size={30}
-              />
+          {moduleData.content?.id ? (
+            <div className="flex flex-col">
+              <p className="whitespace-pre-line text-base my-4 text-justify mx-4">
+                {moduleData.content.topic}
+              </p>
+              <button
+                disabled={deleteContentMutation.isPending}
+                onClick={() =>
+                  deleteContentMutation.mutate({
+                    options: 2,
+                    id: moduleData.content?.id?.toString()!,
+                  })
+                }
+                className="cursor-pointer place-self-end"
+              >
+                <MdDeleteForever className="text-3xl text-danger" />
+              </button>
             </div>
-            {moduleData.contents.length > 0 && (
-              <div className="flex flex-col">
-                <p className="text-xs text-primary mb-4">
-                  Para eliminar un contenido, da click sobre el mismo
-                </p>
-                <ol className="space-y-2 mx-4 list-[lower-roman] list-inside">
-                  {moduleData.contents.map((content, index) => (
-                    <li
-                      className="opacity-100 translate-y-0 transition-all duration-300 ease-out"
-                      onClick={() => handleDeleteContent(content.id)}
-                      key={index}
-                    >
-                      <span>{content.topic}</span>
-                    </li>
-                  ))}
-                </ol>
-                <button
-                  onClick={handleUpdateContents}
-                  className="bg-secondary text-white my-4 p-2 rounded-xl place-self-end hover:bg-secondary/60 cursor-pointer"
-                >
-                  Actualizar Contenidos
-                </button>
+          ) : (
+            <div>
+              <div className="py-5 border-b border-gray-200">
+                <div className="px-4 py-2 bg-white rounded-t-lg">
+                  <textarea
+                    value={moduleInputs.content}
+                    onChange={(e) =>
+                      setModuleInputs((prev) => ({
+                        ...prev,
+                        content: e.target.value,
+                      }))
+                    }
+                    id="resume"
+                    rows={6}
+                    className="w-full px-0 text-sm text-gray-900 bg-white border-0 focus:ring-0"
+                    placeholder="Ingresa un resumen de la conferencia"
+                  ></textarea>
+                </div>
+                <div className="flex items-center justify-end px-3 py-2 border-t">
+                  <button
+                    disabled={contentMutation.isPending}
+                    onClick={() => contentMutation.mutate(moduleInputs.content)}
+                    className="place-self-end p-2 bg-secondary hover:bg-secondary/60 rounded-xl text-white font-semibold cursor-pointer"
+                  >
+                    Actualizar
+                  </button>
+                </div>
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
         <h2 id="accordion-flush-heading-3">
           <button
             type="button"
-            onClick={() => bibliographyQuery.refetch()}
+            onClick={() => extraContentQuery.refetch()}
             className="flex items-center justify-between w-full py-5 font-medium rtl:text-right text-gray-500 border-b border-gray-200 gap-3"
             data-accordion-target="#accordion-flush-body-3"
             aria-expanded="false"
             aria-controls="accordion-flush-body-3"
+          >
+            <div className="flex gap-4">
+              <LuTableOfContents color={Colors.secondary} />
+              <span>Contenido de apoyo</span>
+            </div>
+            <MdKeyboardArrowDown size={25} />
+          </button>
+        </h2>
+        <div
+          id="accordion-flush-body-3"
+          className="hidden"
+          aria-labelledby="accordion-flush-heading-3"
+        >
+          <div className="mx-4 flex flex-col mt-4 items-center">
+            <div className="relative z-0 w-full mb-5 group">
+              <input
+                type="text"
+                name="floating_extra_content"
+                id="floating_extra_content"
+                className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-secondary peer"
+                placeholder=" "
+                value={extraContent.description}
+                onChange={(e) =>
+                  setExtraContent((prev) => ({
+                    ...prev,
+                    description: e.target.value,
+                  }))
+                }
+              />
+              <label
+                htmlFor="floating_extra_content"
+                className="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-secondary peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+              >
+                Ingresa una breve descripcion del contenido
+              </label>
+            </div>
+            <div className="relative z-0 w-full mb-5 group">
+              <input
+                type="text"
+                name="floating_extra_url"
+                id="floating_extra_url"
+                className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-secondary peer"
+                placeholder=" "
+                value={extraContent.url}
+                onChange={(e) =>
+                  setExtraContent((prev) => ({
+                    ...prev,
+                    url: e.target.value,
+                  }))
+                }
+              />
+              <label
+                htmlFor="floating_extra_url"
+                className="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-secondary peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+              >
+                Ingresa un link
+              </label>
+            </div>
+            <IoMdAddCircleOutline
+              className="cursor-pointer text-secondary hover:text-secondary/60"
+              onClick={() => {
+                const content: ExtraContent = {
+                  url: extraContent.url,
+                  description: extraContent.description,
+                  idModule: parseInt(idModule),
+                };
+                if (
+                  extraContent.description.trim() !== "" &&
+                  extraContent.url.trim() !== ""
+                ) {
+                  setModuleData((prev) => ({
+                    ...prev,
+                    extraContent: [...prev.extraContent, content],
+                  }));
+                  setExtraContent({ description: "", url: "" });
+                }
+              }}
+              size={30}
+            />
+          </div>
+          {moduleData.extraContent.length > 0 && (
+            <div className="flex flex-col">
+              <p className="text-xs text-primary mb-4">
+                Para eliminar un contenido, da click sobre el botón rojo
+              </p>
+              <ol className="space-y-2 mx-4 mb-4">
+                {moduleData.extraContent.map((extraContent, index) => (
+                  <li
+                    className="opacity-100 translate-y-0 transition-all duration-300 ease-out flex justify-between items-center"
+                    key={index}
+                  >
+                    <p
+                      onClick={() => window.open(extraContent.url, "_blank")}
+                      className="cursor-pointer"
+                    >
+                      <span className="mr-2">{index + 1}.</span>
+                      <span className="underline underline-offset-2">
+                        {extraContent.description}
+                      </span>
+                    </p>
+                    <MdDeleteForever
+                      className="text-3xl text-danger cursor-pointer"
+                      onClick={() => handleDeleteExtraContent(extraContent.id)}
+                    />
+                  </li>
+                ))}
+              </ol>
+              <button
+                onClick={handleUpdateExtraContent}
+                className="bg-secondary text-white my-4 p-2 rounded-xl place-self-end hover:bg-secondary/60 cursor-pointer"
+              >
+                Actualizar Contenido Extra
+              </button>
+            </div>
+          )}
+        </div>
+        <h2 id="accordion-flush-heading-4">
+          <button
+            type="button"
+            onClick={() => bibliographyQuery.refetch()}
+            className="flex items-center justify-between w-full py-5 font-medium rtl:text-right text-gray-500 border-b border-gray-200 gap-3"
+            data-accordion-target="#accordion-flush-body-4"
+            aria-expanded="false"
+            aria-controls="accordion-flush-body-4"
           >
             <div className="flex gap-4">
               <RiBookOpenLine color={Colors.secondary} />
@@ -356,9 +477,9 @@ export const InfoModule = () => {
           </button>
         </h2>
         <div
-          id="accordion-flush-body-3"
+          id="accordion-flush-body-4"
           className="hidden"
-          aria-labelledby="accordion-flush-heading-3"
+          aria-labelledby="accordion-flush-heading-4"
         >
           <div className="py-5 border-b border-gray-200">
             <div className="mx-4 flex gap-2 items-center">

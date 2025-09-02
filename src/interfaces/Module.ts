@@ -3,10 +3,11 @@ export interface Module {
   title: string;
   number: number;
   professor: string;
-  subject: string;
+  subject?: string; // Eliminar
   status?: boolean;
 }
 
+// Eliminar objetivos
 export interface Objective {
   id?: number;
   description: string;
@@ -23,6 +24,19 @@ export interface Bibliography {
   id?: number;
   reference: string;
   idModule: number;
+}
+
+export interface VideoConference {
+  id?: number;
+  url: string;
+  idModule: number;
+}
+
+export interface ExtraContent {
+  id?: number;
+  url: string;
+  description: string;
+  idModule?: number;
 }
 
 export interface Task {

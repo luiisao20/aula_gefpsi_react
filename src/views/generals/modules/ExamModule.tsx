@@ -81,20 +81,20 @@ export const ExamModule = () => {
 
   const hanldeAddQuestion = async () => {
     if (question.trim() === "") return;
-
-    if (optionsList.length < 2)
-      return setErrorOpt({
-        show: true,
-        message: "Debes agregar al menos dos opciones",
-      });
-
-    if (!optionsList.some((opt) => opt.isCorrect === true))
-      return setErrorOpt({
-        show: true,
-        message: "Debes agregar al menos una opcion correcta",
-      });
-
+    
     if (questionType === 1) {
+      if (!optionsList.some((opt) => opt.isCorrect === true))
+        return setErrorOpt({
+          show: true,
+          message: "Debes agregar al menos una opcion correcta",
+        });
+
+      if (optionsList.length < 2)
+        return setErrorOpt({
+          show: true,
+          message: "Debes agregar al menos dos opciones",
+        });
+
       const newQuestionWithOptionss: QuestionWithOptions = {
         idExam: examData?.id!,
         idType: questionType,

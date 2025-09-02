@@ -1,8 +1,10 @@
 import type {
   Bibliography,
   Content,
+  ExtraContent,
   Module,
   Objective,
+  VideoConference,
 } from "../../../interfaces/Module";
 import api from "../../../../api";
 
@@ -16,7 +18,7 @@ export const getModuleInfo = async (id: string): Promise<Module> => {
       professor: res.data.professor,
       subject: res.data.subject,
       title: res.data.title,
-      status: res.data.status
+      status: res.data.status,
     };
     return response;
   } catch (error) {
@@ -48,21 +50,39 @@ export const getObjectivesByModule = async (
 
 export const getContentsByModule = async (
   idModule: string
-): Promise<Content[]> => {
-  const contents: Content[] = [];
-
+): Promise<Content> => {
   try {
     const res = await api.get(`/modules/contents/${idModule}`);
 
+    const content: Content = {
+      id: res.data.id,
+      topic: res.data.topic,
+      idModule: res.data.id_module,
+    };
+    return content;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getExtraContentByModule = async (
+  idModule: string
+): Promise<ExtraContent[]> => {
+  const extraContents: ExtraContent[] = [];
+
+  try {
+    const res = await api.get(`/modules/extra_contents/${idModule}`);
+
     for (const element of res.data) {
-      const response: Content = {
+      const response: ExtraContent = {
         id: element.id,
-        topic: element.topic,
+        url: element.url,
+        description: element.description,
         idModule: element.id_module,
       };
-      contents.push(response);
+      extraContents.push(response);
     }
-    return contents;
+    return extraContents;
   } catch (error) {
     throw error;
   }
@@ -85,6 +105,22 @@ export const getBibliographyByModule = async (
       bibliography.push(response);
     }
     return bibliography;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getVideoConferenceByModule = async (
+  idModule: string
+): Promise<VideoConference> => {
+  try {
+    const res = await api.get(`/modules/video_conference/${idModule}`);
+    const newVideoConference: VideoConference = {
+      id: res.data.id,
+      url: res.data.url,
+      idModule: res.data.id_module,
+    };
+    return newVideoConference;
   } catch (error) {
     throw error;
   }

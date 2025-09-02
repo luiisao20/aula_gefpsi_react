@@ -3,9 +3,10 @@ import type { SideRoute } from "../views/profile";
 
 interface Props {
   routes: SideRoute[];
+  title?: string;
 }
 
-export const Sidebar = ({ routes }: Props) => {
+export const Sidebar = ({ routes, title }: Props) => {
   return (
     <>
       <button
@@ -37,6 +38,11 @@ export const Sidebar = ({ routes }: Props) => {
         aria-label="Sidebar"
       >
         <div className="h-full px-3 py-4 overflow-y-auto">
+          {title && (
+            <h2 className="self-center mb-4 text-primary text-xl font-semibold whitespace-nowrap">
+              {title}
+            </h2>
+          )}
           <ul className="space-y-2 font-medium">
             {routes.map((item, index) => (
               <NavLink

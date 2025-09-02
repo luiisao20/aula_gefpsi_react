@@ -19,14 +19,10 @@ export const ModuleScreen = () => {
     <div className="relative">
       <ButtonGoBack />
       <h2 className="text-2xl text-center font-semibold text-secondary">
-        Módulo: {dataModule?.number}
+        Conferencia: {dataModule?.number}
       </h2>
       <div className="flex flex-col md:flex-row justify-between items-start">
         <div className="m-4">
-          <h2 className="text-lg">
-            <span className="font-semibold text-primary">Materia:</span>{" "}
-            {dataModule?.subject}
-          </h2>
           <h2 className="text-lg">
             <span className="font-semibold text-primary">Profesor:</span>{" "}
             {dataModule?.professor}

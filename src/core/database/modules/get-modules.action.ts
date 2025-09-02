@@ -13,6 +13,7 @@ export const getModules = async (): Promise<Module[]> => {
         title: element.title,
         professor: element.professor,
         number: element.module_number,
+        status: element.status
       };
       modules.push(module);
     }
