@@ -4,5 +4,7 @@ const opciones: Intl.DateTimeFormatOptions = {
   day: "numeric",
 };
 
-export const getFormattedDate = (date: string): string =>
-  new Date(date).toLocaleDateString("es-es", opciones);
+export const getFormattedDate = (date: string): string | null =>
+  new Date(date).toLocaleDateString("es-es", opciones) === "Invalid Date"
+    ? null
+    : new Date(date).toLocaleDateString("es-es", opciones);

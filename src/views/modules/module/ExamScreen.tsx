@@ -1,0 +1,227 @@
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router";
+
+import Stack from "@mui/material/Stack";
+import Pagination from "@mui/material/Pagination";
+
+import type { ExamData } from "../../../interfaces/Students";
+import { useQuestionsExam } from "../../../presentation/student/useExam";
+import { ModalReact } from "../../../components/ModalReact";
+import { useExamByStudent } from "../../../presentation/modules/useExam";
+
+export interface AnswerExam {
+  idQuestion: number;
+  idOption?: number;
+  text?: string;
+}
+
+export interface ModalProps {
+  open: boolean;
+  message: string;
+  warning?: boolean;
+  showButtons?: boolean;
+  loading?: boolean;
+}
+
+export const ExamScreen = () => {
+  const { idEval } = useParams();
+  const navigate = useNavigate();
+  const idStudent = "14";
+
+  const [examDataList, setExamDataList] = useState<ExamData[]>([]);
+  const [page, setPage] = useState<number>(1);
+  const [totalPages, setTotalPages] = useState<number>(0);
+  const [currentItems, setCurrentItems] = useState<ExamData[]>([]);
+  const [answersExam, setAnswersExam] = useState<AnswerExam[]>([]);
+  const [modalProps, setModalProps] = useState<ModalProps>({
+    message: "",
+    open: false,
+  });
+
+  const { examStudentQuery, examStudentMutation } = useExamByStudent(
+    idStudent,
+    idEval
+  );
+  const { questionsStudentQuery } = useQuestionsExam(`${idEval}`);
+  const itemsPerPage = 5;
+
+  useEffect(() => {
+    if (questionsStudentQuery.data) {
+      const data = questionsStudentQuery.data;
+      setExamDataList(data);
+      setTotalPages(Math.ceil(data.length / itemsPerPage));
+      setPage(1);
+    }
+  }, [questionsStudentQuery.data]);
+
+  useEffect(() => {
+    if (questionsStudentQuery.data) {
+      const initialAnswers = questionsStudentQuery.data.map((item) => ({
+        idQuestion: item.id,
+      }));
+      setAnswersExam(initialAnswers);
+    }
+  }, [questionsStudentQuery.data]);
+
+  useEffect(() => {
+    const startIndex = (page - 1) * itemsPerPage;
+    const sliced = examDataList.slice(startIndex, startIndex + itemsPerPage);
+    setCurrentItems(sliced);
+  }, [page, examDataList]);
+
+  const handleChange = (value: number) => {
+    setPage(value);
+  };
+
+  const handleSelectOption = (idQuestion: number, idOption: number) => {
+    setAnswersExam((prev) =>
+      prev.map((a) =>
+        a.idQuestion === idQuestion ? { ...a, idOption: idOption } : a
+      )
+    );
+  };
+
+  const handleWriteAnswer = (idQuestion: number, text: string) => {
+    setAnswersExam((prev) =>
+      prev.map((a) => (a.idQuestion === idQuestion ? { ...a, text: text } : a))
+    );
+  };
+
+  const handleShowModal = async () => {
+    const notAnswered = answersExam
+      .filter((answer) => !answer.idOption && !answer.text)
+      .map((answer) => {
+        const questionNumber = examDataList.findIndex(
+          (q) => q.id === answer.idQuestion
+        );
+        return questionNumber !== -1 ? questionNumber + 1 : null;
+      })
+      .filter((num) => num !== null);
+    setModalProps((prev) => ({
+      ...prev!,
+      open: true,
+      warning: true,
+      showButtons: true,
+      message: `Existen preguntas sin responder
+                ${notAnswered.join("; ")}
+                ¿Estás seguro de enviar los datos?
+                Esta acción no se puede deshacer
+              `,
+    }));
+    return;
+  };
+
+  const handleSendData = async () => {
+    const res = await examStudentMutation.mutateAsync(answersExam);
+    alert(res.message);
+    navigate(-1);
+  };
+
+  if (examStudentQuery.isLoading || questionsStudentQuery.isLoading)
+    return <h1>Cargando</h1>;
+
+  if (examStudentQuery.data)
+    return <h1 className="text-primary font-bold text-center">Forbidden</h1>;
+
+  return (
+    <div>
+      <ModalReact
+        message={modalProps.message}
+        onConfirm={handleSendData}
+        showButtons={modalProps.showButtons}
+        warning={modalProps.warning}
+        open={modalProps.open}
+        loading={examStudentMutation.isPending}
+        onClose={() => setModalProps((prev) => ({ ...prev, open: false }))}
+      />
+      <h2 className="text-xl font-semibold text-center text-secondary">
+        Contesta las siguientes preguntas
+      </h2>
+      <p className="font-semibold text-base my-4">
+        Sólo hay una opción correcta en las preguntas de opción múltiple.
+      </p>
+      <div className="flex justify-end">
+        <Pagination
+          count={totalPages}
+          page={page}
+          onChange={(_, value) => handleChange(value)}
+        />
+      </div>
+      <Stack className="my-4" spacing={2}>
+        {currentItems.map((item, index) => (
+          <div key={index} className="px-6">
+            {item.idType === 1 ? (
+              <div className="flex flex-col space-y-4">
+                <h2 className="font-semibold text-primary">
+                  {examDataList.findIndex((e) => e.id === item.id) + 1}.{" "}
+                  {item.question}
+                </h2>
+                {item.options.map((opt, subIndex) => (
+                  <div
+                    key={index + subIndex}
+                    className="flex items-center mb-4 px-4"
+                  >
+                    <input
+                      id={`question-${item.id}-option-${opt.id}`}
+                      type="radio"
+                      checked={
+                        answersExam.some((e) => e.idOption === opt.id) ?? false
+                      }
+                      onChange={() => handleSelectOption(item.id, opt.id)}
+                      name={`question-${index}`}
+                      value="USA"
+                      className="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-primary/30"
+                    />
+                    <label
+                      htmlFor={`question-${item.id}-option-${opt.id}`}
+                      className="block ms-2  text-sm font-medium"
+                    >
+                      {opt.option}
+                    </label>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="flex flex-col space-y-4">
+                <label
+                  htmlFor={`answer-${item.id}`}
+                  className="font-semibold text-primary"
+                >
+                  {examDataList.findIndex((e) => e.question === item.question) +
+                    1}
+                  . {item.question}
+                </label>
+                <div className="mx-4">
+                  <textarea
+                    value={
+                      answersExam.find((a) => a.idQuestion === item.id)?.text ??
+                      ""
+                    }
+                    onChange={(e) => handleWriteAnswer(item.id, e.target.value)}
+                    id={`answer-${item.id}`}
+                    rows={3}
+                    className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary/60 focus:border-primary/60"
+                    placeholder="Respuesta..."
+                  ></textarea>
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
+        <div className="flex flex-col items-end justify-end">
+          <Pagination
+            count={totalPages}
+            page={page}
+            onChange={(_, value) => handleChange(value)}
+          />
+          <button
+            onClick={handleShowModal}
+            className="px-4 py-2 bg-secondary hover:bg-secondary/60 cursor-pointer text-white font-semibold rounded-xl"
+          >
+            Enviar
+          </button>
+        </div>
+      </Stack>
+    </div>
+  );
+};

@@ -28,6 +28,7 @@ export const getExamByModule = async (idModule: string): Promise<Exam> => {
 export const updateExam = async (exam: Exam) => {
   try {
     const res = await api.put(`/exams/${exam.id}`, exam);
+    console.log(res.data);
     return res.data;
   } catch (error) {
     throw error;

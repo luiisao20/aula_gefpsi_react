@@ -81,7 +81,7 @@ export const ExamModule = () => {
 
   const hanldeAddQuestion = async () => {
     if (question.trim() === "") return;
-    
+
     if (questionType === 1) {
       if (!optionsList.some((opt) => opt.isCorrect === true))
         return setErrorOpt({
@@ -166,7 +166,12 @@ export const ExamModule = () => {
               </div>
             </div>
             <button
-              onClick={() => examMutate.mutate(examData)}
+              onClick={() =>
+                examMutate.mutate({
+                  ...examData,
+                  dueDate: examData.dueDate ?? new Date(),
+                })
+              }
               className="p-2 cursor-pointer bg-secondary hover:bg-secondary/60 text-white rounded-xl"
             >
               Actualizar información

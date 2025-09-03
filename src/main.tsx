@@ -22,7 +22,8 @@ import { ModulesStudent } from "./views/modules";
 import { ModuleInfoStudent } from "./views/modules/module/InfoStudent";
 import { ModuleStudent } from "./views/modules/module";
 import { ModuleBibliographyStudent } from "./views/modules/module/BibliographyStudent";
-import { TasksIndex } from "./views/modules/module/TasksScreen";
+import { ExamIndex } from "./views/modules/module/ExamIndex";
+import { ExamScreen } from "./views/modules/module/ExamScreen";
 
 const root = document.getElementById("root")!;
 
@@ -58,7 +59,8 @@ ReactDOM.createRoot(root).render(
               path="bibliography"
               element={<ModuleBibliographyStudent />}
             />
-            <Route path="tasks" element={<TasksIndex />} />
+            <Route path="eval" element={<ExamIndex />} />
+            <Route path="eval/:idEval" element={<ExamScreen />} />
           </Route>
         </Route>
       </Routes>

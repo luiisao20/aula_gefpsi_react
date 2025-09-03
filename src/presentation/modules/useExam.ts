@@ -1,10 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+
 import {
   createExamByModule,
   getExamByModule,
   getExamTypes,
   updateExam,
 } from "../../core/database/modules/exams-by-module.action";
+
 import type { Exam } from "../../interfaces/Module";
 import {
   createQuestionByExam,
@@ -12,6 +14,14 @@ import {
   deleteQuestion,
   getQuestionsWithOptions,
 } from "../../core/database/modules/questions-options-by-exam.action";
+
+import {
+  getAnswers,
+  getStateExamStudent,
+} from "../../core/database/students/get-exam-data.action";
+import { insertStudentExamData } from "../../core/database/students/insert-student-exam-data.action";
+
+import type { AnswerExam } from "../../views/modules/module/ExamScreen";
 
 export const useExam = (idModule: string) => {
   const queryClient = useQueryClient();
@@ -32,7 +42,7 @@ export const useExam = (idModule: string) => {
       queryClient.invalidateQueries({
         queryKey: ["exam", idModule],
       });
-      console.log(res);
+      alert(res.message);
     },
 
     onError: (error: any) => {
@@ -117,4 +127,38 @@ export const useQuestions = (idExam?: string) => {
     questionWithOptionsMutation,
     deleteQuestionMutation,
   };
+};
+
+export const useExamByStudent = (idStudent: string, idExam?: string) => {
+  const queryClient = useQueryClient();
+
+  const answersQuery = useQuery({
+    queryFn: () => getAnswers(idStudent, idExam!),
+    queryKey: ["answers", idStudent, idExam],
+    staleTime: 1000 * 60 * 60,
+  });
+
+  const examStudentQuery = useQuery({
+    queryFn: () => getStateExamStudent(idStudent, idExam!),
+    queryKey: ["examState", idStudent, idExam],
+    staleTime: 1000 * 60 * 60,
+    enabled: !!idExam,
+  });
+
+  const examStudentMutation = useMutation({
+    mutationFn: (data: AnswerExam[]) =>
+      insertStudentExamData(idStudent, idExam!, data),
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["examState", idStudent, idExam],
+      });
+    },
+
+    onError: (error: any) => {
+      console.error(error.response?.data?.error || error.message);
+    },
+  });
+
+  return { answersQuery, examStudentQuery, examStudentMutation };
 };

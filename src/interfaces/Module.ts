@@ -51,7 +51,7 @@ export interface Task {
 
 export interface Exam {
   id?: number;
-  idModule: number;
+  idModule?: number;
   dueDate?: Date;
   status?: boolean;
 }

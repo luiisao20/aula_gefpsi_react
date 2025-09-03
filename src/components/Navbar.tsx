@@ -124,7 +124,7 @@ export const Navbar = () => {
             </li>
             <li>
               <Link
-                to="/generals"
+                to="/generals/modules"
                 className="block py-2 px-3 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-secondary md:p-0 "
               >
                 Generales
