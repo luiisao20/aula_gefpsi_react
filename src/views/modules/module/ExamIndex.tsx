@@ -11,7 +11,7 @@ export const ExamIndex = () => {
   const { id } = useParams();
   const idModule = `${id}`;
   const navigate = useNavigate();
-  const idStudent = "14";
+  const idStudent = "1";
 
   const [examData, setExamData] = useState<Exam>();
   const [examState, setExamState] = useState<boolean>();

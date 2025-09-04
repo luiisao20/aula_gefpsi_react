@@ -1,14 +1,22 @@
+import { Outlet } from "react-router";
+
 import { IoIosCreate } from "react-icons/io";
+import { PiStudentBold } from "react-icons/pi";
+
 import type { SideRoute } from "../profile";
 import { Sidebar } from "../../components/Sidebar";
-import {Outlet} from "react-router";
 
 export const GeneralScreen = () => {
   const routes: SideRoute[] = [
     {
-      name: "Módulos",
+      name: "Conferencias",
       route: "/generals/modules",
       icon: <IoIosCreate size={25} />,
+    },
+    {
+      name: "Estudianes",
+      route: "/generals/students",
+      icon: <PiStudentBold size={25} />,
     },
   ];
   return (

@@ -12,10 +12,11 @@ import { useExamByStudent } from "../../../presentation/modules/useExam";
 export interface AnswerExam {
   idQuestion: number;
   idOption?: number;
+  idType: number;
   text?: string;
 }
 
-export interface ModalProps {
+export interface ModalReactProps {
   open: boolean;
   message: string;
   warning?: boolean;
@@ -26,14 +27,14 @@ export interface ModalProps {
 export const ExamScreen = () => {
   const { idEval } = useParams();
   const navigate = useNavigate();
-  const idStudent = "14";
+  const idStudent = "18";
 
   const [examDataList, setExamDataList] = useState<ExamData[]>([]);
   const [page, setPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(0);
   const [currentItems, setCurrentItems] = useState<ExamData[]>([]);
   const [answersExam, setAnswersExam] = useState<AnswerExam[]>([]);
-  const [modalProps, setModalProps] = useState<ModalProps>({
+  const [modalProps, setModalProps] = useState<ModalReactProps>({
     message: "",
     open: false,
   });
@@ -58,6 +59,7 @@ export const ExamScreen = () => {
     if (questionsStudentQuery.data) {
       const initialAnswers = questionsStudentQuery.data.map((item) => ({
         idQuestion: item.id,
+        idType: item.idType,
       }));
       setAnswersExam(initialAnswers);
     }
@@ -89,7 +91,10 @@ export const ExamScreen = () => {
 
   const handleShowModal = async () => {
     const notAnswered = answersExam
-      .filter((answer) => !answer.idOption && !answer.text)
+      .filter(
+        (answer) =>
+          (!answer.idOption && !answer.text) || answer.text?.trim() === ""
+      )
       .map((answer) => {
         const questionNumber = examDataList.findIndex(
           (q) => q.id === answer.idQuestion
@@ -97,18 +102,33 @@ export const ExamScreen = () => {
         return questionNumber !== -1 ? questionNumber + 1 : null;
       })
       .filter((num) => num !== null);
+
+    if (notAnswered.length > 0) {
+      setModalProps((prev) => ({
+        ...prev!,
+        open: true,
+        warning: true,
+        showButtons: true,
+        message: `
+          Existen preguntas sin responder
+          ${notAnswered.join("; ")}
+          ¿Estás seguro de enviar los datos?
+          Esta acción no se puede deshacer
+        `,
+      }));
+      return;
+    }
+
     setModalProps((prev) => ({
       ...prev!,
       open: true,
-      warning: true,
+      warning: false,
       showButtons: true,
-      message: `Existen preguntas sin responder
-                ${notAnswered.join("; ")}
-                ¿Estás seguro de enviar los datos?
-                Esta acción no se puede deshacer
-              `,
+      message: `
+        ¿Estás seguro de enviar los datos?
+        Esta acción no se puede deshacer  
+      `,
     }));
-    return;
   };
 
   const handleSendData = async () => {

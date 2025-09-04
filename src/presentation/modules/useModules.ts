@@ -51,7 +51,7 @@ export const useModule = (id: string) => {
       queryClient.invalidateQueries({
         queryKey: ["module", id],
       });
-      console.log(response);
+      alert(response.message);
     },
 
     onError: (error) => console.log(error),

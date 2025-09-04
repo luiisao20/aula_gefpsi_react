@@ -8,9 +8,9 @@ import Modal from "@mui/material/Modal";
 import Backdrop from "@mui/material/Backdrop";
 
 import { Colors } from "../assets/colors";
-import type { ModalProps } from "../views/modules/module/ExamScreen";
+import type { ModalReactProps } from "../views/modules/module/ExamScreen";
 
-interface Props extends ModalProps {
+interface Props extends ModalReactProps {
   onClose: () => void;
   onConfirm: () => void;
 }
@@ -65,7 +65,7 @@ export const ModalReact = ({
                 ) : (
                   <GiConfirmed size={80} color={Colors.success} />
                 )}
-                <h3 className="my-5 text-lg font-normal text-gray-500 whitespace-pre-line">
+                <h3 className="mb-5 text-lg font-normal text-gray-500 whitespace-pre-line">
                   {message}
                 </h3>
                 {showButtons && (

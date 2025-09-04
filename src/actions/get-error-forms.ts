@@ -41,3 +41,23 @@ export const taskForm = Yup.object().shape({
 
   instructions: Yup.string().required("La descripción es un campo obligatorio"),
 });
+
+export const buildGradesSchema = (questions: { idQuestion: number; questionType: number }[]) => {
+  const gradeFields: Record<string, Yup.StringSchema> = {};
+
+  questions.forEach(({ idQuestion, questionType }) => {
+    gradeFields[idQuestion] = questionType === 1
+      ? Yup.string() // opción múltiple, ya viene predefinida
+      : Yup.string()
+          .required("Este campo es obligatorio")
+          .test("valid-range", "Debe estar entre 0 y 1", (val) => {
+            const num = parseFloat(val ?? "");
+            return !isNaN(num) && num >= 0 && num <= 1;
+          });
+  });
+
+  return Yup.object({
+    grades: Yup.object().shape(gradeFields)
+  });
+};
+

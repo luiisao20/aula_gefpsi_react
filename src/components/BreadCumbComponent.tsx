@@ -1,11 +1,13 @@
-import {FaCheckSquare} from "react-icons/fa";
+import { FaCheckSquare } from "react-icons/fa";
 import { IoIosArrowForward } from "react-icons/io";
 import { MdTask } from "react-icons/md";
 import { RiInfoCardFill } from "react-icons/ri";
 import { NavLink } from "react-router";
 
 interface Props {
-  id: string;
+  id?: string;
+
+  styles?: string;
 }
 
 export const BreadCumbComponent = ({ id }: Props) => {
@@ -54,6 +56,46 @@ export const BreadCumbComponent = ({ id }: Props) => {
             >
               <FaCheckSquare className="mr-2" size={20} />
               Examen
+            </NavLink>
+          </div>
+        </li>
+      </ol>
+    </nav>
+  );
+};
+
+export const BreadCumbComponentStudent = ({ styles }: Props) => {
+  return (
+    <nav className={`flex justify-center ${styles}`} aria-label="Breadcrumb">
+      <ol className="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
+        <li>
+          <div className="flex items-center">
+            <NavLink
+              to={`exam`}
+              className={({ isActive }) =>
+                `inline-flex items-center text-sm font-medium text-gray-700 ${
+                  isActive && "text-secondary"
+                }`
+              }
+            >
+              <FaCheckSquare className="mr-2" size={20} />
+              Examen
+            </NavLink>
+          </div>
+        </li>
+        <li>
+          <div className="flex items-center">
+            <IoIosArrowForward size={18} className="text-gray-400 mx-1" />
+            <NavLink
+              to={`tasks`}
+              className={({ isActive }) =>
+                `inline-flex items-center text-sm font-medium text-gray-700 ${
+                  isActive && "text-secondary"
+                }`
+              }
+            >
+              <MdTask className="mr-2" size={20} />
+              Trabajos sincrónicos
             </NavLink>
           </div>
         </li>

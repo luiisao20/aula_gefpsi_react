@@ -1,7 +1,11 @@
+import { FaUserGraduate } from "react-icons/fa6";
 import { getFormattedDate } from "../actions/get-date-formatted";
 import type { Book } from "../interfaces/Library";
 import type { Notice } from "../interfaces/Notice";
 import type { Payment } from "../interfaces/Payment";
+import type { Student } from "../interfaces/Students";
+import { Colors } from "../assets/colors";
+import { Link } from "react-router";
 
 interface Props {
   payments: Payment[];
@@ -162,6 +166,76 @@ export const TableBooks = ({ books }: BooksProps) => {
           ))}
         </tbody>
       </table>
+    </div>
+  );
+};
+
+interface StudentsProps {
+  students: Student[];
+}
+
+export const TableStudents = ({ students }: StudentsProps) => {
+  return (
+    <div className="mb-10">
+      <h2 className="text-center font-bold my-6 text-2xl text-secondary">
+        Listado de estudiantes
+      </h2>
+      <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+        <table className="w-full text-sm text-left rtl:text-right text-gray-500">
+          <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+            <tr>
+              <th scope="col" className="px-6 py-3">
+                Estudiante
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Acción
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {students.map((student) => (
+              <tr
+                key={student.id}
+                className="bg-white border-b border-gray-200 hover:bg-gray-50"
+              >
+                <th
+                  scope="row"
+                  className="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap"
+                >
+                  {student.urlPhoto ? (
+                    <img
+                      className="w-10 h-10 rounded-full"
+                      src={student.urlPhoto}
+                      alt="Jese image"
+                    />
+                  ) : (
+                    <FaUserGraduate
+                      className="w-10 h-10 bg-secondary/10 rounded-full"
+                      color={Colors.secondary}
+                    />
+                  )}
+                  <div className="ps-3">
+                    <div className="text-base font-semibold">
+                      {student.lastName} {student.firstName}
+                    </div>
+                    <div className="font-normal text-gray-500">
+                      {student.email}
+                    </div>
+                  </div>
+                </th>
+                <td className="px-6 py-4">
+                  <Link
+                    to={`/generals/student/${student.id}`}
+                    className="font-medium text-primary hover:underline"
+                  >
+                    Ingresar
+                  </Link>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
