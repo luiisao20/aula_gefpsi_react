@@ -39,7 +39,7 @@ export const StudentExam = () => {
   const { examQuery } = useExam(idModule!);
   const { answersQuery, answersMutation } = useAnswers(
     id!,
-    examData?.id?.toString()!
+    examData?.id?.toString()!,
   );
   const { gradeQuery } = useGrade(id!, examData?.id?.toString()!);
 
@@ -133,6 +133,7 @@ export const StudentExam = () => {
             grades: newDataAnswers?.grades!,
             totalGrade: newDataAnswers?.totalGrade!,
             update: gradeData ? true : false,
+            idModule: idModule!
           });
           setModalProps((prev) => ({ ...prev!, open: false }));
           return;
@@ -191,7 +192,7 @@ export const StudentExam = () => {
                             ) : (
                               <FaXmark className="w-6 h-6 text-danger" />
                             )}
-                            {item.answer ?? (
+                            {item.optionSelected ?? (
                               <span className="font-semibold underline underline-offset-2 italic">
                                 Pregunta sin respuesta
                               </span>

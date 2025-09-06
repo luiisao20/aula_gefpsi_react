@@ -123,14 +123,18 @@ export const useQuestions = (idExam?: string) => {
   };
 };
 
-export const useExamByStudent = (idStudent: string, idExam?: string) => {
-  const queryClient = useQueryClient();
-
+export const useAnswers = (idStudent: string, idExam?: string) => {
   const answersQuery = useQuery({
     queryFn: () => getAnswers(idStudent, idExam!),
     queryKey: ["answers", idStudent, idExam],
     staleTime: 1000 * 60 * 60,
   });
+
+  return { answersQuery };
+};
+
+export const useExamByStudent = (idStudent: string, idExam?: string) => {
+  const queryClient = useQueryClient();
 
   const examStudentQuery = useQuery({
     queryFn: () => getStateExamStudent(idStudent, idExam!),
@@ -154,5 +158,5 @@ export const useExamByStudent = (idStudent: string, idExam?: string) => {
     },
   });
 
-  return { answersQuery, examStudentQuery, examStudentMutation };
+  return { examStudentQuery, examStudentMutation };
 };

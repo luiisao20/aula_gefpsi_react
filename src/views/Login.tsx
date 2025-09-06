@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 
 import { InputPassword } from "../components/InputPassword";
 import { ModalComponent, type ModalRef } from "../components/ModalComponent";
@@ -83,6 +83,14 @@ const Login = () => {
                   >
                     ¿Olvidaste tu contraseña?
                   </a>
+                </div>
+                <div className="flex items-center justify-between">
+                  <Link
+                  to='/register'
+                    className="text-sm font-medium text-primary-600 hover:underline"
+                  >
+                    Regístrate con tu nueva cuenta
+                  </Link>
                 </div>
                 <button
                   type="submit"

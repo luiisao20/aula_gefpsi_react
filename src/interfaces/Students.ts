@@ -2,9 +2,10 @@ export interface Student {
   id?: number;
   firstName: string;
   lastName: string;
+  email?: string;
   biography?: null;
   urlPhoto?: null;
-  admin: boolean;
+  admin?: boolean;
 }
 
 interface Option {

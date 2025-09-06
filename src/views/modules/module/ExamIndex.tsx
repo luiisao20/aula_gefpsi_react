@@ -6,19 +6,21 @@ import {
 } from "../../../presentation/modules/useExam";
 import { useNavigate, useParams } from "react-router";
 import { getFormattedDate } from "../../../actions/get-date-formatted";
+import { useAuthStore } from "../../../presentation/auth/useAuthStore";
+import {LoaderComponent} from "../../../components/SpinnerComponent";
 
 export const ExamIndex = () => {
   const { id } = useParams();
   const idModule = `${id}`;
   const navigate = useNavigate();
-  const idStudent = "1";
 
+  const { user } = useAuthStore();
   const [examData, setExamData] = useState<Exam>();
   const [examState, setExamState] = useState<boolean>();
 
   const { examQuery } = useExam(idModule);
   const { examStudentQuery } = useExamByStudent(
-    idStudent,
+    user?.id!,
     examData?.id?.toString()
   );
 
@@ -29,6 +31,10 @@ export const ExamIndex = () => {
   useEffect(() => {
     if (examQuery.data) setExamData(examQuery.data);
   }, [examQuery.data]);
+
+  if (examQuery.isLoading || examStudentQuery.isLoading) {
+    return <LoaderComponent />
+  }
 
   return (
     <div className="flex flex-col pt-5 pb-10">

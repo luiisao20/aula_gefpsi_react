@@ -1,9 +1,10 @@
 import type { Session, Subscription, User } from "@supabase/supabase-js";
 import { create } from "zustand";
 
-import { authLogin } from "../../core/auth/authActions";
+import { authLogin, authRegister } from "../../core/auth/authActions";
 import { supabase } from "../../../supabase";
 import { updatePassword } from "../../core/database/users/user.action";
+import type { FormRegister } from "../../views/Register";
 
 interface AuthState {
   user?: User;
@@ -21,6 +22,7 @@ interface AuthState {
     oldPassword: string,
     newPassword: string
   ) => Promise<boolean>;
+  register: (data: FormRegister) => Promise<boolean>;
 }
 
 export const useAuthStore = create<AuthState>()((set, get) => ({
@@ -44,8 +46,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
     } = await supabase.auth.getSession();
     await get().changeStatus(session ?? undefined, session?.user);
 
-    if (!session) console.log('error');
-    
+    if (!session) console.log("error");
 
     const {
       data: { subscription },
@@ -101,5 +102,12 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
     );
     if (wasSuccessful) return true;
     return false;
+  },
+
+  register: async (data: FormRegister) => {
+    set({ loading: true });
+    const res = await authRegister(data.email, data.password);
+    set({ loading: false });
+    return get().changeStatus(res?.session, res?.user);
   },
 }));

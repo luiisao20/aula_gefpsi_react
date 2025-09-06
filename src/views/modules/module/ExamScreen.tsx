@@ -8,6 +8,8 @@ import type { ExamData } from "../../../interfaces/Students";
 import { useQuestionsExam } from "../../../presentation/student/useExam";
 import { ModalReact } from "../../../components/ModalReact";
 import { useExamByStudent } from "../../../presentation/modules/useExam";
+import { useAuthStore } from "../../../presentation/auth/useAuthStore";
+import { LoaderComponent } from "../../../components/SpinnerComponent";
 
 export interface AnswerExam {
   idQuestion: number;
@@ -27,7 +29,7 @@ export interface ModalReactProps {
 export const ExamScreen = () => {
   const { idEval } = useParams();
   const navigate = useNavigate();
-  const idStudent = "18";
+  const { user } = useAuthStore();
 
   const [examDataList, setExamDataList] = useState<ExamData[]>([]);
   const [page, setPage] = useState<number>(1);
@@ -40,7 +42,7 @@ export const ExamScreen = () => {
   });
 
   const { examStudentQuery, examStudentMutation } = useExamByStudent(
-    idStudent,
+    user?.id!,
     idEval
   );
   const { questionsStudentQuery } = useQuestionsExam(`${idEval}`);
@@ -132,13 +134,13 @@ export const ExamScreen = () => {
   };
 
   const handleSendData = async () => {
-    const res = await examStudentMutation.mutateAsync(answersExam);
-    alert(res.message);
+    await examStudentMutation.mutateAsync(answersExam);
+    alert("Examen publicado");
     navigate(-1);
   };
 
   if (examStudentQuery.isLoading || questionsStudentQuery.isLoading)
-    return <h1>Cargando</h1>;
+    return <LoaderComponent />;
 
   if (examStudentQuery.data)
     return <h1 className="text-primary font-bold text-center">Forbidden</h1>;

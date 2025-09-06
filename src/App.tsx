@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Outlet, useMatch, useNavigate } from "react-router";
+import { Outlet, useLocation, useMatch, useNavigate } from "react-router";
 
 import "./assets/main.css";
 import { Navbar } from "./components/Navbar";
@@ -9,7 +9,11 @@ import { useStudent } from "./presentation/student/useStudent";
 
 const App = () => {
   const matchRoot = useMatch("/");
+  const location = useLocation();
   const navigate = useNavigate();
+
+  const publicRoutes = ["/", "/register"];
+  const showNavbar = publicRoutes.includes(location.pathname);
 
   const [admin, setAdmin] = useState<boolean>();
 
@@ -25,11 +29,16 @@ const App = () => {
   }, [checkStatus]);
 
   useEffect(() => {
-    if (status === "unauthenticated") {
+    const currentPath = window.location.pathname;
+
+    if (status === "unauthenticated" && !publicRoutes.includes(currentPath)) {
       navigate("/", { replace: true });
-    } else if (status === "authenticated" && matchRoot) {
-      navigate("/home", { replace: true });
     }
+
+    if (location.pathname === "/" && status === "authenticated") {
+      navigate("/home");
+    }
+
   }, [status, matchRoot, navigate]);
 
   if (status === "checking") {
@@ -38,7 +47,9 @@ const App = () => {
 
   return (
     <div>
-      {!matchRoot && <Navbar admin={admin} onLogout={logout} loadingLogut={loading} />}
+      {!showNavbar && (
+        <Navbar admin={admin} onLogout={logout} loadingLogut={loading} />
+      )}
       <Outlet />
     </div>
   );

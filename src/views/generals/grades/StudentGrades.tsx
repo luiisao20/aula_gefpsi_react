@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router";
 
 import type { ModuleGrade } from "../../../interfaces/Grades";
 import { useStudentGrades } from "../../../presentation/grades/useGrades";
-import { useStudent } from "../../../presentation/student/useStudent";
+import { useStudentInfo } from "../../../presentation/student/useStudent";
 import type { Student } from "../../../interfaces/Students";
 import { TableGrades } from "../../../components/TableComponent";
 import { ButtonGoBack } from "../../../components/ButtonGoBack";
@@ -15,16 +15,16 @@ export const StudentGrades = () => {
   const [dataGrades, setDataGrades] = useState<ModuleGrade[]>([]);
   const [dataStudent, setDataStudent] = useState<Student>();
 
-  const { gradesQuery } = useStudentGrades(parseInt(id!));
-  const { studentQuery } = useStudent(id!);
+  const { gradesQuery } = useStudentGrades(id!);
+  const { studentInfoQuery } = useStudentInfo(id!);
 
   useEffect(() => {
     if (gradesQuery.data) setDataGrades(gradesQuery.data);
   }, [gradesQuery.data]);
 
   useEffect(() => {
-    if (studentQuery.data) setDataStudent(studentQuery.data);
-  }, [studentQuery.data]);
+    if (studentInfoQuery.data) setDataStudent(studentInfoQuery.data);
+  }, [studentInfoQuery.data]);
 
   return (
     <div className="relative my-6">

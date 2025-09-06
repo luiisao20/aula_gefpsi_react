@@ -3,18 +3,20 @@ import { Outlet, useParams } from "react-router";
 
 import { ButtonGoBack } from "../../../components/ButtonGoBack";
 import type { Student } from "../../../interfaces/Students";
-import { useStudent } from "../../../presentation/student/useStudent";
+import {
+  useStudentInfo,
+} from "../../../presentation/student/useStudent";
 
 export const StudentIndex = () => {
   const { id } = useParams();
 
   const [dataStudent, setDataStudent] = useState<Student>();
 
-  const { studentQuery } = useStudent(`${id}`);
+  const { studentInfoQuery } = useStudentInfo(`${id}`);
 
   useEffect(() => {
-    if (studentQuery.data) setDataStudent(studentQuery.data);
-  }, [studentQuery.data]);
+    if (studentInfoQuery.data) setDataStudent(studentInfoQuery.data);
+  }, [studentInfoQuery.data]);
 
   return (
     <div className="relative">
@@ -24,11 +26,12 @@ export const StudentIndex = () => {
       </h2>
       <div className="my-4 mx-6 flex flex-col space-y-2">
         <h2 className="text-lg">
-          <span className="font-semibold">Nombres:</span> {dataStudent?.lastName}{" "}
-          {dataStudent?.firstName}
+          <span className="font-semibold">Nombres:</span>{" "}
+          {dataStudent?.lastName} {dataStudent?.firstName}
         </h2>
         <h2 className="text-lg">
-          <span className="font-semibold">Correo electrónico:</span> {dataStudent?.email}
+          <span className="font-semibold">Correo electrónico:</span>{" "}
+          {dataStudent?.email}
         </h2>
       </div>
       <Outlet />

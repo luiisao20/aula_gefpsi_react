@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import App from "./App";
 import Login from "./views/Login";
+import { RegisterScreen } from "./views/Register";
 import { HomeScreen } from "./views/Home";
 import { ProfileIndex } from "./views/profile";
 
@@ -51,6 +52,7 @@ ReactDOM.createRoot(root).render(
       <Routes>
         <Route element={<App />}>
           <Route index element={<Login />} />
+          <Route path="register" element={<RegisterScreen />} />
           <Route path="home" element={<HomeScreen />} />
           <Route path="notices" element={<NoticesScreen />} />
           <Route path="profile" element={<ProfileIndex />}>

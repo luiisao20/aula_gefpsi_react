@@ -3,6 +3,7 @@ import * as Yup from "yup";
 const regex = {
   password: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/,
   text: /^[^\s][\p{L}\p{M}\d\s.,;:!?()"'¿¡-]*[^\s]$/u,
+  names: /^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ\s]+$/,
 };
 
 export const updatePassword = Yup.object().shape({
@@ -38,22 +39,55 @@ export const taskForm = Yup.object().shape({
   instructions: Yup.string().required("La descripción es un campo obligatorio"),
 });
 
-export const buildGradesSchema = (questions: { idQuestion: number; questionType: number }[]) => {
+export const registerForm = Yup.object().shape({
+  firstName: Yup.string()
+    .matches(
+      regex.names,
+      "Hay caracteres inválidos, ingresa sólo letras y espacios"
+    )
+    .required("Este campo es obligatorio"),
+
+  lastName: Yup.string()
+    .matches(
+      regex.names,
+      "Hay caracteres inválidos, ingresa sólo letras y espacios"
+    )
+    .required("Este campo es obligatorio"),
+
+  email: Yup.string()
+    .email("Debes ingresar un correo electrónico válido")
+    .required("Este campo es obligatorio"),
+
+  password: Yup.string()
+    .matches(
+      regex.password,
+      "La contraseña debe tener mínimo 8 caracteres, una mayúscula, un número y un caracter especial (!'&+-,./-@?:;)"
+    )
+    .required("Debes ingresar una contraseña"),
+
+  confirmPassword: Yup.string()
+    .oneOf([Yup.ref("password")], "Las contraseñas deben coincidir")
+    .required("Debes repetir tu contraseña"),
+});
+
+export const buildGradesSchema = (
+  questions: { idQuestion: number; questionType: number }[]
+) => {
   const gradeFields: Record<string, Yup.StringSchema> = {};
 
   questions.forEach(({ idQuestion, questionType }) => {
-    gradeFields[idQuestion] = questionType === 1
-      ? Yup.string() // opción múltiple, ya viene predefinida
-      : Yup.string()
-          .required("Este campo es obligatorio")
-          .test("valid-range", "Debe estar entre 0 y 1", (val) => {
-            const num = parseFloat(val ?? "");
-            return !isNaN(num) && num >= 0 && num <= 1;
-          });
+    gradeFields[idQuestion] =
+      questionType === 1
+        ? Yup.string() // opción múltiple, ya viene predefinida
+        : Yup.string()
+            .required("Este campo es obligatorio")
+            .test("valid-range", "Debe estar entre 0 y 1", (val) => {
+              const num = parseFloat(val ?? "");
+              return !isNaN(num) && num >= 0 && num <= 1;
+            });
   });
 
   return Yup.object({
-    grades: Yup.object().shape(gradeFields)
+    grades: Yup.object().shape(gradeFields),
   });
 };
-
