@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   createExamByModule,
   getExamByModule,
-  getExamTypes,
+  getQuestionTypes,
   updateExam,
 } from "../../core/database/modules/exams-by-module.action";
 
@@ -34,15 +34,15 @@ export const useExam = (idModule: string) => {
 
   const examMutate = useMutation({
     mutationFn: async (exam: Exam) => {
-      if (!exam.id) return await createExamByModule(idModule.toString());
+      if (!exam) return await createExamByModule(idModule.toString());
       return await updateExam(exam);
     },
 
-    onSuccess: (res) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["exam", idModule],
       });
-      alert(res.message);
+      alert("Examen publicado!");
     },
 
     onError: (error: any) => {
@@ -55,7 +55,7 @@ export const useExam = (idModule: string) => {
 
 export const useTypes = () => {
   const typesQuery = useQuery({
-    queryFn: () => getExamTypes(),
+    queryFn: () => getQuestionTypes(),
     queryKey: ["examTypes"],
     staleTime: 1000 * 60 * 60,
   });
@@ -76,12 +76,10 @@ export const useQuestions = (idExam?: string) => {
   const questionMutation = useMutation({
     mutationFn: createQuestionByExam,
 
-    onSuccess: (res) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["questions", idExam],
       });
-
-      console.log(res);
     },
 
     onError: (error: any) => {
@@ -92,12 +90,10 @@ export const useQuestions = (idExam?: string) => {
   const questionWithOptionsMutation = useMutation({
     mutationFn: createQuestionWithOptionss,
 
-    onSuccess: (res) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["questions", idExam],
       });
-
-      console.log(res);
     },
 
     onError: (error: any) => {
@@ -108,12 +104,10 @@ export const useQuestions = (idExam?: string) => {
   const deleteQuestionMutation = useMutation({
     mutationFn: deleteQuestion,
 
-    onSuccess: (res) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["questions", idExam],
       });
-
-      console.log(res);
     },
 
     onError: (error: any) => {

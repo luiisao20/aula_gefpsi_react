@@ -3,10 +3,13 @@ import {
   getAllStudents,
   getExamByStudent,
   getGradeByStudent,
-  getStudent,
   updateGradeQuestionsByStudent,
 } from "../../core/database/students/students.action";
 import type { GradesByQuestion } from "../../views/generals/students/StudentExam";
+import {
+  getUser,
+  updateBiography,
+} from "../../core/database/users/user.action";
 
 export const useStudents = () => {
   const studentsQuery = useQuery({
@@ -18,14 +21,33 @@ export const useStudents = () => {
   return { studentsQuery };
 };
 
-export const useStudent = (idStudent: string) => {
+export const useStudent = (idStudent?: string) => {
+  const queryClient = useQueryClient();
+
   const studentQuery = useQuery({
-    queryFn: () => getStudent(idStudent),
+    queryFn: () => getUser(idStudent!),
     queryKey: ["student", idStudent],
     staleTime: 1000 * 60 * 60,
+    enabled: !!idStudent
   });
 
-  return { studentQuery };
+  const studentMutation = useMutation({
+    mutationFn: (biography: string) => updateBiography(biography, idStudent!),
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["student", idStudent],
+      });
+
+      alert("Biografía actualiada");
+    },
+
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+
+  return { studentQuery, studentMutation };
 };
 
 export const useAnswers = (idStudent: string, idExam: string) => {
@@ -42,11 +64,11 @@ export const useAnswers = (idStudent: string, idExam: string) => {
     mutationFn: async ({
       grades,
       totalGrade,
-      update
+      update,
     }: {
       grades: GradesByQuestion[];
       totalGrade: number;
-      update?: boolean
+      update?: boolean;
     }) =>
       await updateGradeQuestionsByStudent(
         idStudent,

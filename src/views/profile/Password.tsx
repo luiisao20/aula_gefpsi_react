@@ -1,7 +1,8 @@
 import { Formik } from "formik";
 import { InputPassword } from "../../components/InputPassword";
 import { CustomErrorMessage } from "../../components/CustomErrorMessage";
-import {updatePassword} from "../../actions/get-error-forms";
+import { updatePassword } from "../../actions/get-error-forms";
+import { useAuthStore } from "../../presentation/auth/useAuthStore";
 
 interface PasswordForm {
   oldPassword: string;
@@ -16,6 +17,8 @@ export const Password = () => {
     confirmPassword: "",
   };
 
+  const { changePassword } = useAuthStore();
+
   return (
     <div className="bg-white p-4 rounded-xl">
       <h1 className="text-center font-semibold text-xl">Cambiar contraseña</h1>
@@ -26,8 +29,13 @@ export const Password = () => {
       <Formik
         initialValues={passwordForm}
         onSubmit={async (formLike, { setSubmitting }) => {
-          console.log({ formLike });
+          const success = await changePassword(
+            formLike.oldPassword,
+            formLike.newPassword
+          );
 
+          if (success)
+            alert("Exito la contraseña se ha actualizado con éxito!");
           setSubmitting(false);
         }}
         validationSchema={updatePassword}
@@ -47,7 +55,7 @@ export const Password = () => {
             <InputPassword
               password={values.oldPassword}
               id="oldPassword"
-              name='oldPassword'
+              name="oldPassword"
               changeText={handleChange("oldPassword")}
               onBlur={handleBlur("oldPassword")}
             />
@@ -88,7 +96,9 @@ export const Password = () => {
               disabled={isSubmitting}
               onClick={() => handleSubmit()}
               type="button"
-              className="bg-primary text-center p-4 rounded-xl cursor-pointer hover:bg-primary/60 text-white font-semibold"
+              className={`bg-primary text-center p-4 rounded-xl cursor-pointer hover:bg-primary/60 text-white font-semibold ${
+                isSubmitting && "cursor-progress"
+              }`}
             >
               Actualizar contraseña
             </button>

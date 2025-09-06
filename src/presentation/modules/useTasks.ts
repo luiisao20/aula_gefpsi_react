@@ -18,11 +18,10 @@ export const useTasks = (idModule: string) => {
   const tasksMutation = useMutation({
     mutationFn: async (data: Task) => createNewTask(data),
 
-    onSuccess: (response) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["tasks", idModule],
       });
-      console.log(response.message);
     },
 
     onError: (error: any) => {
@@ -36,8 +35,8 @@ export const useTasks = (idModule: string) => {
       publishTask(id, published),
 
     onSuccess: () => {
-      console.log("Estado actualizado");
       queryClient.invalidateQueries({ queryKey: ["tasks", idModule] });
+      alert("Estado actualizado");
     },
 
     onError: (error: any) => {
@@ -48,9 +47,8 @@ export const useTasks = (idModule: string) => {
   const deleteTaskMutation = useMutation({
     mutationFn: deleteTask,
 
-    onSuccess: (response) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tasks", idModule] });
-      console.log(response.message);
     },
 
     onError: (error: any) => {

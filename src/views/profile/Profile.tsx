@@ -1,16 +1,35 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useAuthStore } from "../../presentation/auth/useAuthStore";
+import { useStudent } from "../../presentation/student/useStudent";
+import type { Student } from "../../interfaces/Students";
+import { LoaderComponent } from "../../components/SpinnerComponent";
 
 export const Profile = () => {
   const [description, setDescription] = useState<string>("");
+  const [dataUser, setDataUser] = useState<Student>();
+
+  const { user } = useAuthStore();
+  const { studentQuery, studentMutation } = useStudent(user?.id!);
+
+  useEffect(() => {
+    if (studentQuery.data) setDataUser(studentQuery.data);
+  }, [studentQuery.data]);
+
+  useEffect(() => {
+    if (studentQuery.data) setDescription(studentQuery.data.biography ?? "");
+  }, [studentQuery.data]);
+
+  if (studentQuery.isLoading) {
+    return <LoaderComponent />;
+  }
 
   return (
     <div className="bg-white rounded-xl p-4">
       <h1 className="text-center mb-4 text-xl font-semibold">
-        Bienvenido Luis Bravo!
+        Bienvenido {dataUser?.firstName} {dataUser?.lastName}
       </h1>
-      <h2 className="px-4">Grupo: GR4</h2>
-      <h2 className="px-4">Correo: bravo.luis.1995@gmail.com</h2>
-      <form action="" className="my-5 px-4">
+      <h2 className="px-4">Correo: {user?.email}</h2>
+      <div className="my-5 px-4">
         <h2 className="mb-4">Realiza una breve descripción de tu persona</h2>
         <div className="w-full mb-4 border border-gray-200 rounded-lg bg-gray-50">
           <div className="px-4 py-2 bg-white rounded-t-lg">
@@ -28,14 +47,15 @@ export const Profile = () => {
           </div>
           <div className="flex items-center justify-between px-3 py-2 border-t">
             <button
-              disabled={description.trim() === ""}
-              className="bg-primary text-white p-2 font-semibold rounded-xl"
+              disabled={description.trim() === "" && studentMutation.isPending}
+              onClick={() => studentMutation.mutate(description)}
+              className="bg-primary text-white p-2 font-semibold rounded-xl cursor-pointer"
             >
               Guardar
             </button>
           </div>
         </div>
-      </form>
+      </div>
     </div>
   );
 };

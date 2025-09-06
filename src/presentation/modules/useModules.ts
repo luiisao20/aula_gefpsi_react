@@ -31,27 +31,28 @@ export const useModules = () => {
     },
   });
 
-  return { modulesQuery, moduleMutation };
+  return { moduleMutation, modulesQuery };
 };
 
-export const useModule = (id: string) => {
+export const useModule = (id?: string) => {
   const queryClient = useQueryClient();
 
   const moduleQuery = useQuery({
     queryKey: ["module", id],
-    queryFn: () => getModuleInfo(id),
+    queryFn: () => getModuleInfo(id!),
     staleTime: 1000 * 60 * 60,
+    enabled: !!id
   });
 
   const mutateModule = useMutation({
     mutationFn: async ({ id, value }: { id: string; value: boolean }) =>
       await publishModule(id, value),
 
-    onSuccess: (response) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["module", id],
       });
-      alert(response.message);
+      alert('La conferencia se ha actualizado con exito!');
     },
 
     onError: (error) => console.log(error),

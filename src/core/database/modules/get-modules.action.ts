@@ -1,24 +1,21 @@
 import type { Module } from "../../../interfaces/Module";
-import api from "../../../../api";
+import { supabase } from "../../../../supabase";
 
 export const getModules = async (): Promise<Module[]> => {
-  const modules: Module[] = [];
-  try {
-    const res = await api.get("/modules");
+  const { data, error } = await supabase.from("modules").select();
 
-    for (const element of res.data) {
-      const module: Module = {
-        id: element.id,
-        subject: element.subject,
-        title: element.title,
-        professor: element.professor,
-        number: element.module_number,
-        status: element.status
-      };
-      modules.push(module);
-    }
-    return modules;
-  } catch (error) {
-    throw error;
+  if (error) throw new Error(error.message);
+
+  const modules: Module[] = [];
+
+  for (const element of data) {
+    modules.push({
+      id: element.id,
+      number: element.module_number,
+      title: element.title,
+      professor: element.professor,
+      status: element.status
+    });
   }
+  return modules;
 };

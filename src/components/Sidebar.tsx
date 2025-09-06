@@ -1,12 +1,24 @@
 import { NavLink } from "react-router";
 import type { SideRoute } from "../views/profile";
+import { MdLogout } from "react-icons/md";
 
 interface Props {
   routes: SideRoute[];
   title?: string;
+  profile?: boolean;
+  loadingLogout?: boolean;
+
+  onLogout?: () => void;
 }
 
-export const Sidebar = ({ routes, title }: Props) => {
+export const Sidebar = ({
+  routes,
+  title,
+  profile,
+  loadingLogout,
+
+  onLogout,
+}: Props) => {
   return (
     <>
       <button
@@ -60,6 +72,20 @@ export const Sidebar = ({ routes, title }: Props) => {
                 </span>
               </NavLink>
             ))}
+            {profile && (
+              <button
+                disabled={loadingLogout}
+                onClick={onLogout}
+                className={`flex w-full items-center justify-start rounded-xl p-2 shadow hover:transition hover:delay-100 hover:scale-105 cursor-pointer ${
+                  loadingLogout && "cursor-progress"
+                }`}
+              >
+                <MdLogout size={25} />
+                <p className="flex-1 ms-3 whitespace-nowrap text-justify">
+                  Cerrar sesión
+                </p>
+              </button>
+            )}
           </ul>
         </div>
       </aside>

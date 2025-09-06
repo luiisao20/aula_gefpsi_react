@@ -2,6 +2,8 @@ import { Outlet } from "react-router";
 
 import { IoIosCreate } from "react-icons/io";
 import { PiStudentBold } from "react-icons/pi";
+import { MdOutlineGrade } from "react-icons/md";
+import { TiWarningOutline } from "react-icons/ti";
 
 import type { SideRoute } from "../profile";
 import { Sidebar } from "../../components/Sidebar";
@@ -17,6 +19,16 @@ export const GeneralScreen = () => {
       name: "Estudianes",
       route: "/generals/students",
       icon: <PiStudentBold size={25} />,
+    },
+    {
+      name: "Calificaciones",
+      route: "/generals/grades",
+      icon: <MdOutlineGrade size={25} />,
+    },
+        {
+      name: "Avisos",
+      route: "/generals/ads",
+      icon: <TiWarningOutline size={25} />,
     },
   ];
   return (

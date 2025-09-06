@@ -1,20 +1,27 @@
 import type { Module } from "../../../interfaces/Module";
-import api from "../../../../api";
+import { supabase } from "../../../../supabase";
 
-export const createNewModule = async (module: Module): Promise<number> => {
-  try {
-    const res = await api.post("/modules", module);
-    return res.data.id;
-  } catch (error) {
-    throw error;
-  }
+export const createNewModule = async (module: Module) => {
+  const { data, error } = await supabase
+    .from("modules")
+    .insert({
+      title: module.title,
+      professor: module.professor,
+      module_number: module.number,
+    })
+    .select()
+    .single();
+
+  if (error) throw new Error(error.message);
+
+  return data.module_number as number;
 };
 
 export const publishModule = async (id: string, value: boolean) => {
-  try {
-    const res = await api.put(`/modules/${id}`, { value });
-    return res.data;
-  } catch (error) {
-    throw error;
-  }
+  const { error } = await supabase
+    .from("modules")
+    .update({ status: value })
+    .eq("id", id);
+
+  if (error) throw new Error(error.message);
 };

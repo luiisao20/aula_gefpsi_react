@@ -44,7 +44,7 @@ export interface Task {
   title: string;
   dueDate: Date;
   instructions: string;
-  publishedDate: Date;
+  publishedDate?: Date;
   idModule: string;
   status?: boolean;
 }

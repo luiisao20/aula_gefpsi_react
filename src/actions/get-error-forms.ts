@@ -28,10 +28,6 @@ export const moduleForm = Yup.object().shape({
   professor: Yup.string()
     .matches(regex.text)
     .required("El nombre del profesor es obligatorio"),
-
-  subject: Yup.string()
-    .matches(regex.text)
-    .required("La materia es obligatoria"),
 });
 
 export const taskForm = Yup.object().shape({

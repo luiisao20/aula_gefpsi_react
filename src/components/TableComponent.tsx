@@ -6,6 +6,7 @@ import type { Payment } from "../interfaces/Payment";
 import type { Student } from "../interfaces/Students";
 import { Colors } from "../assets/colors";
 import { Link } from "react-router";
+import type { ModuleGrade, StudentGradeModule } from "../interfaces/Grades";
 
 interface Props {
   payments: Payment[];
@@ -171,15 +172,32 @@ export const TableBooks = ({ books }: BooksProps) => {
 };
 
 interface StudentsProps {
-  students: Student[];
+  students: Student[] | StudentGradeModule[];
+
+  grades?: boolean;
+  idModule?: number;
+  module?: boolean;
 }
 
-export const TableStudents = ({ students }: StudentsProps) => {
+export const TableStudents = ({
+  students,
+  grades,
+  idModule,
+  module,
+}: StudentsProps) => {
+  const goRoute = (id: number): string => {
+    if (grades) return `/generals/student/${id}/module/${idModule}/exam`;
+    else if (module) return `/generals/grades/students/${id}`;
+    return `/generals/student/${id}`;
+  };
+
   return (
     <div className="mb-10">
-      <h2 className="text-center font-bold my-6 text-2xl text-secondary">
-        Listado de estudiantes
-      </h2>
+      {!grades && (
+        <h2 className="text-center font-bold my-6 text-2xl text-secondary">
+          Listado de estudiantes
+        </h2>
+      )}
       <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
         <table className="w-full text-sm text-left rtl:text-right text-gray-500">
           <thead className="text-xs text-gray-700 uppercase bg-gray-50">
@@ -187,6 +205,11 @@ export const TableStudents = ({ students }: StudentsProps) => {
               <th scope="col" className="px-6 py-3">
                 Estudiante
               </th>
+              {grades && (
+                <th scope="col" className="px-6 py-3">
+                  Calificación
+                </th>
+              )}
               <th scope="col" className="px-6 py-3">
                 Acción
               </th>
@@ -223,12 +246,19 @@ export const TableStudents = ({ students }: StudentsProps) => {
                     </div>
                   </div>
                 </th>
+                {grades && (
+                  <td className="px-6 py-4 text-base font-semibold">
+                    {"grade" in student && student.state
+                      ? student.grade.toFixed(2)
+                      : "No calificado"}
+                  </td>
+                )}
                 <td className="px-6 py-4">
                   <Link
-                    to={`/generals/student/${student.id}`}
+                    to={goRoute(student.id!)}
                     className="font-medium text-primary hover:underline"
                   >
-                    Ingresar
+                    {grades ? "Calificar" : "Ingresar"}
                   </Link>
                 </td>
               </tr>
@@ -236,6 +266,60 @@ export const TableStudents = ({ students }: StudentsProps) => {
           </tbody>
         </table>
       </div>
+    </div>
+  );
+};
+
+interface GradesProps {
+  grades: ModuleGrade[];
+  idStudent: number;
+}
+
+export const TableGrades = ({ grades, idStudent }: GradesProps) => {
+  return (
+    <div className="relative overflow-x-auto shadow-md sm:rounded-lg mt-6">
+      <table className="w-full text-sm text-left rtl:text-right text-gray-500">
+        <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+          <tr>
+            <th scope="col" className="px-6 py-3">
+              Conferencia
+            </th>
+            <th scope="col" className="px-6 py-3">
+              Calificación
+            </th>
+            <th scope="col" className="px-6 py-3">
+              Fecha de calificación
+            </th>
+            <th scope="col" className="px-6 py-3">
+              Editar
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {grades.map((item) => (
+            <tr className="bg-white border-b border-gray-200">
+              <th
+                scope="row"
+                className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
+              >
+                Conferencia N° {item.module}
+              </th>
+              <td className="px-6 py-4 text-center">{item.grade.toFixed(2)}</td>
+              <td className="px-6 py-4">
+                {getFormattedDate(`${item.gradedAt}`)}
+              </td>
+              <td className="px-6 py-4 text-right">
+                <Link
+                  to={`/generals/student/${idStudent}/module/${item.idModule}/exam`}
+                  className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                >
+                  Ir
+                </Link>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };

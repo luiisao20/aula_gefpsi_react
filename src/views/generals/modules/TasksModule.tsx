@@ -9,10 +9,6 @@ import {
 } from "../../../components/ModalComponent";
 import type { Task } from "../../../interfaces/Module";
 import { useTasks } from "../../../presentation/modules/useTasks";
-import { getFormattedDate } from "../../../actions/get-date-formatted";
-import { ToggleComponent } from "../../../components/ToggleComponent";
-import { MdDeleteForever } from "react-icons/md";
-import { Colors } from "../../../assets/colors";
 import { TaskComponent } from "../../../components/TaskComponent";
 
 interface ConfirmDialog {
@@ -25,9 +21,12 @@ interface ConfirmDialog {
 export const TasksModule = () => {
   const modalRef = useRef<ModalRef>(null);
   const modalConfirm = useRef<ModalRef>(null);
+
   const { id } = useParams();
-  const [tasksList, setTasksList] = useState<Task[]>([]);
+
   const { tasksQuery, publishMutation, deleteTaskMutation } = useTasks(`${id}`);
+
+  const [tasksList, setTasksList] = useState<Task[]>([]);
   const [confirmDialog, setConfirmDialog] = useState<ConfirmDialog>({
     message: "¿Estás seguro de eliminar la tarea?",
     showButtons: false,

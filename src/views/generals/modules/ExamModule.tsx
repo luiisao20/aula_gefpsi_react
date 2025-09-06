@@ -329,7 +329,11 @@ export const ExamModule = () => {
                   questionMutation.isPending ||
                   questionWithOptionsMutation.isPending
                 }
-                className="cursor-pointer"
+                className={`cursor-pointer ${
+                  (questionMutation.isPending ||
+                    questionWithOptionsMutation.isPending) &&
+                  "cursor-progress"
+                }`}
               >
                 <IoMdAddCircleOutline
                   className="place-self-center mt-2 text-secondary transition-all duration-300 hover:rotate-90"

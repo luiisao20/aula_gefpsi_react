@@ -5,7 +5,14 @@ import { IoPerson } from "react-icons/io5";
 
 import { initFlowbite } from "flowbite";
 
-export const Navbar = () => {
+interface Props {
+  loadingLogut: boolean;
+  admin?: boolean;
+
+  onLogout: () => void;
+}
+
+export const Navbar = ({ admin, loadingLogut, onLogout }: Props) => {
   useEffect(() => {
     initFlowbite();
   }, []);
@@ -60,8 +67,12 @@ export const Navbar = () => {
               </li>
               <li>
                 <a
-                  href="#"
-                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-secondary"
+                  onClick={() => {
+                    if (!loadingLogut) onLogout();
+                  }}
+                  className={`block px-4 py-2 cursor-pointer text-sm text-gray-700 hover:bg-secondary ${
+                    loadingLogut && "cursor-progress"
+                  }`}
                   role="menuitem"
                 >
                   <div className="inline-flex items-center">Cerrar sesión</div>
@@ -122,14 +133,16 @@ export const Navbar = () => {
                 Avisos
               </Link>
             </li>
-            <li>
-              <Link
-                to="/generals/modules"
-                className="block py-2 px-3 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-secondary md:p-0 "
-              >
-                Generales
-              </Link>
-            </li>
+            {admin && (
+              <li>
+                <Link
+                  to="/generals/modules"
+                  className="block py-2 px-3 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-secondary md:p-0 "
+                >
+                  Generales
+                </Link>
+              </li>
+            )}
           </ul>
         </div>
       </div>

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router";
 
 import { InputPassword } from "../components/InputPassword";
 import { ModalComponent, type ModalRef } from "../components/ModalComponent";
+import { useAuthStore } from "../presentation/auth/useAuthStore";
 
 const Login = () => {
   const [formLogin, setFormLogin] = useState({
@@ -13,13 +14,19 @@ const Login = () => {
   const modalRef = useRef<ModalRef>(null);
   const [modalMsg, setModalMsg] = useState<string>("");
   const navigate = useNavigate();
+  const { loading, login } = useAuthStore();
 
-  const handleSubmit = () => {
-    // modalRef.current?.show();
+  const handleSubmit = async () => {
+    const wasSuccessfull = await login(formLogin.email, formLogin.password);
+
+    if (wasSuccessfull) {
+      return navigate("/home");
+    }
+
+    modalRef.current?.show();
     setModalMsg(
       "¡Ingreso incorrecto! Correo electrónico o contraseña son inválidos"
     );
-    navigate("/home");
   };
 
   return (
@@ -79,7 +86,10 @@ const Login = () => {
                 </div>
                 <button
                   type="submit"
-                  className="w-full text-white bg-primary cursor-pointer hover:bg-primary/70 focus:ring-4 focus:outline-none focus:ring-primary font-medium rounded-lg text-sm px-5 py-2.5"
+                  disabled={loading}
+                  className={`w-full text-white bg-primary cursor-pointer hover:bg-primary/70 focus:ring-4 focus:outline-none focus:ring-primary font-medium rounded-lg text-sm px-5 py-2.5 ${
+                    loading && "cursor-progress"
+                  }`}
                 >
                   Iniciar sesión
                 </button>

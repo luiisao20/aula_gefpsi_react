@@ -1,4 +1,4 @@
-import api from "../../../../api";
+import { supabase } from "../../../../supabase";
 
 interface Props {
   options: 1 | 2 | 3 | 4 | 5;
@@ -12,15 +12,12 @@ export const deleteInfoFromModule = async ({ options, id }: Props) => {
       : options === 2
       ? "contents"
       : options === 3
-      ? "bibliography"
+      ? "bibliographies"
       : options === 4
-      ? "video_conference"
+      ? "video_conferences"
       : "extra_content";
 
-  try {
-    const res = await api.delete(`/modules/${route()}/${id}`);
-    return res.data;
-  } catch (error) {
-    throw error;
-  }
+  const { error } = await supabase.from(route()).delete().eq("id", id);
+
+  if (error) throw new Error(error.message);
 };

@@ -7,23 +7,26 @@ import type {
   VideoConference,
 } from "../../../interfaces/Module";
 import api from "../../../../api";
+import { supabase } from "../../../../supabase";
 
 export const getModuleInfo = async (id: string): Promise<Module> => {
-  try {
-    const res = await api.get(`/modules/${id}`);
+  const { data, error } = await supabase
+    .from("modules")
+    .select()
+    .eq("id", id)
+    .single();
 
-    const response: Module = {
-      id: res.data.id,
-      number: res.data.module_number,
-      professor: res.data.professor,
-      subject: res.data.subject,
-      title: res.data.title,
-      status: res.data.status,
-    };
-    return response;
-  } catch (error) {
-    throw error;
-  }
+  if (error) throw new Error(error.message);
+
+  const response: Module = {
+    id: data.id,
+    number: data.module_number,
+    professor: data.professor,
+    subject: data.subject,
+    title: data.title,
+    status: data.status,
+  };
+  return response;
 };
 
 export const getObjectivesByModule = async (
@@ -51,18 +54,19 @@ export const getObjectivesByModule = async (
 export const getContentsByModule = async (
   idModule: string
 ): Promise<Content> => {
-  try {
-    const res = await api.get(`/modules/contents/${idModule}`);
+  const { data, error } = await supabase
+    .from("contents")
+    .select()
+    .eq("id_module", idModule);
 
-    const content: Content = {
-      id: res.data.id,
-      topic: res.data.topic,
-      idModule: res.data.id_module,
-    };
-    return content;
-  } catch (error) {
-    throw error;
-  }
+  if (error) throw new Error(error.message);
+
+  const content: Content = {
+    id: data[0].id,
+    topic: data[0].topic,
+    idModule: data[0].id_module,
+  };
+  return content;
 };
 
 export const getExtraContentByModule = async (
@@ -70,22 +74,22 @@ export const getExtraContentByModule = async (
 ): Promise<ExtraContent[]> => {
   const extraContents: ExtraContent[] = [];
 
-  try {
-    const res = await api.get(`/modules/extra_contents/${idModule}`);
+  const { data, error } = await supabase
+    .from("extra_content")
+    .select()
+    .eq("id_module", idModule);
 
-    for (const element of res.data) {
-      const response: ExtraContent = {
-        id: element.id,
-        url: element.url,
-        description: element.description,
-        idModule: element.id_module,
-      };
-      extraContents.push(response);
-    }
-    return extraContents;
-  } catch (error) {
-    throw error;
+  if (error) throw new Error(error.message);
+
+  for (const element of data) {
+    extraContents.push({
+      id: element.id,
+      url: element.url,
+      description: element.description,
+      idModule: element.id_module,
+    });
   }
+  return extraContents;
 };
 
 export const getBibliographyByModule = async (
@@ -93,35 +97,37 @@ export const getBibliographyByModule = async (
 ): Promise<Bibliography[]> => {
   const bibliography: Bibliography[] = [];
 
-  try {
-    const res = await api.get(`/modules/bibliography/${idModule}`);
+  const { data, error } = await supabase
+    .from("bibliographies")
+    .select()
+    .eq("id_module", idModule);
 
-    for (const element of res.data) {
-      const response: Bibliography = {
-        id: element.id,
-        reference: element.reference,
-        idModule: element.id_module,
-      };
-      bibliography.push(response);
-    }
-    return bibliography;
-  } catch (error) {
-    throw error;
+  if (error) throw error;
+
+  for (const element of data) {
+    bibliography.push({
+      id: element.id,
+      reference: element.reference,
+      idModule: element.id_module,
+    });
   }
+  return bibliography;
 };
 
 export const getVideoConferenceByModule = async (
-  idModule: string
+  idModule: number
 ): Promise<VideoConference> => {
-  try {
-    const res = await api.get(`/modules/video_conference/${idModule}`);
-    const newVideoConference: VideoConference = {
-      id: res.data.id,
-      url: res.data.url,
-      idModule: res.data.id_module,
-    };
-    return newVideoConference;
-  } catch (error) {
-    throw error;
-  }
+  const { data, error } = await supabase
+    .from("video_conferences")
+    .select()
+    .eq("id_module", idModule);
+
+  if (error) throw new Error(error.message);
+
+  const newVideoConference: VideoConference = {
+    id: data[0].id,
+    url: data[0].url,
+    idModule: data[0].id_module,
+  };
+  return newVideoConference;
 };

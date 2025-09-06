@@ -1,4 +1,4 @@
-import api from "../../../../api";
+import { supabase } from "../../../../supabase";
 import type {
   Option,
   Question,
@@ -6,68 +6,89 @@ import type {
 } from "../../../interfaces/Module";
 
 export const createQuestionByExam = async (question: Question) => {
-  try {
-    const res = await api.post("/exams/question", question);
-    return res.data;
-  } catch (error) {
-    throw error;
-  }
+  const { error } = await supabase.from("questions").insert({
+    text: question.text,
+    id_exam: question.idExam,
+    id_type: question.idType,
+  });
+
+  if (error) throw error;
 };
 
 export const createQuestionWithOptionss = async (
   questionWithOptions: QuestionWithOptions
 ) => {
-  try {
-    const res = await api.post("/exams/question/options", questionWithOptions);
-    return res.data;
-  } catch (error) {
-    throw error;
+  const { idExam, idType, options, text } = questionWithOptions;
+  const { data: question, error: qError } = await supabase
+    .from("questions")
+    .insert({ text: text, id_exam: idExam, id_type: idType })
+    .select()
+    .single();
+
+  if (qError) throw qError;
+
+  for (const option of options) {
+    const { error: oError } = await supabase.from("options").insert({
+      text: option.text,
+      is_correct: option.isCorrect,
+      id_question: question.id,
+    });
+
+    if (oError) throw oError;
   }
 };
 
 export const getQuestionsWithOptions = async (
   idExam: string
 ): Promise<QuestionWithOptions[]> => {
+  const { data: questions, error: qError } = await supabase
+    .from("questions")
+    .select()
+    .eq("id_exam", idExam);
+
+  if (qError) throw qError;
+
+  if (!questions) return [];
+
   const questionsWithOptions: QuestionWithOptions[] = [];
-  try {
-    const res = await api.get(`/exams/questions/${idExam}`);
 
-    for (const element of res.data) {
-      const options: Option[] = [];
+  for (const question of questions) {
+    const optionsList: Option[] = [];
 
-      if (element.options.length > 0) {
-        for (const option of element.options) {
-          const newOption: Option = {
-            idQuestion: option.id_question,
+    if (question.id_type === 1) {
+      const { data: options, error: oError } = await supabase
+        .from("options")
+        .select("*")
+        .eq("id_question", question.id);
+
+      if (oError) throw oError;
+
+      if (options) {
+        for (const option of options) {
+          optionsList.push({
             isCorrect: option.is_correct,
             text: option.text,
             id: option.id,
-          };
-          options.push(newOption);
+            idQuestion: option.id_question,
+          });
         }
       }
-
-      const newQuestionWithOptions: QuestionWithOptions = {
-        id: element.id,
-        text: element.text,
-        idType: element.id_type,
-        idExam: element.id_exam,
-        options: options,
-      };
-      questionsWithOptions.push(newQuestionWithOptions);
     }
 
-    return questionsWithOptions || [];
-  } catch (error) {
-    throw error;
+    questionsWithOptions.push({
+      id: question.id,
+      text: question.text,
+      idExam: question.id_exam,
+      idType: question.id_type,
+      options: optionsList,
+    });
   }
+
+  return questionsWithOptions;
 };
 
 export const deleteQuestion = async (id: string) => {
-  try {
-    const res = await api.delete(`/exams/questions/${id}`);
-    return res.data;
-  } catch (error) {
-    throw error;
-  }
+  const { error } = await supabase.from("questions").delete().eq("id", id);
+
+  if (error) throw error;
 };

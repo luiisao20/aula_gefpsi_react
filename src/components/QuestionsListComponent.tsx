@@ -34,7 +34,7 @@ export const QuestionsListComponent = ({
                   <button
                     disabled={isDeleting}
                     onClick={() => onDelete(item.id?.toString()!)}
-                    className="cursor-pointer"
+                    className={`cursor-pointer ${isDeleting && 'cursor-progress'}`}
                   >
                     <MdDeleteForever className="text-3xl text-danger" />
                   </button>

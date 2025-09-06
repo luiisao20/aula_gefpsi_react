@@ -16,7 +16,7 @@ import {
   insertVideoConferenceByModule,
 } from "../../core/database/modules/insert-info-by-module.action";
 import { deleteInfoFromModule } from "../../core/database/modules/delete-info-by-modules.action";
-import type {ExtraContent} from "../../interfaces/Module";
+import type { ExtraContent } from "../../interfaces/Module";
 
 export const useObjectives = (idModule: string) => {
   const queryClient = useQueryClient();
@@ -48,12 +48,12 @@ export const useObjectives = (idModule: string) => {
   const deleteObjectiveMutation = useMutation({
     mutationFn: deleteInfoFromModule,
 
-    onSuccess: (response) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["objectives", idModule],
       });
       objectivesQuery.refetch();
-      console.log(response.message);
+      alert("Contenido borrado exitosamente");
     },
 
     onError: (error: any) => {
@@ -78,12 +78,12 @@ export const useContents = (idModule: string) => {
   const contentMutation = useMutation({
     mutationFn: async (data: string) => insertContentsByModule(idModule, data),
 
-    onSuccess: (response) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["content", idModule],
       });
       contentQuery.refetch();
-      alert(response.message);
+      alert("Resumen subido con éxito");
     },
 
     onError: (error: any) => {
@@ -95,12 +95,12 @@ export const useContents = (idModule: string) => {
   const deleteContentMutation = useMutation({
     mutationFn: deleteInfoFromModule,
 
-    onSuccess: (response) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["content", idModule],
       });
       contentQuery.refetch();
-      alert(response.message);
+      alert("Contenido borrado exitosamente");
     },
 
     onError: (error: any) => {
@@ -126,12 +126,12 @@ export const useBibliography = (idModule: string) => {
     mutationFn: async (data: string[]) =>
       insertBibliographyByModule(idModule, data),
 
-    onSuccess: (response) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["bibliography", idModule],
       });
 
-      alert(response.message);
+      alert('Contenido ingresado');
     },
 
     onError: (error: any) => {
@@ -143,12 +143,11 @@ export const useBibliography = (idModule: string) => {
   const deleteBibliographyMutation = useMutation({
     mutationFn: deleteInfoFromModule,
 
-    onSuccess: (response) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["bibliography", idModule],
       });
       bibliographyQuery.refetch();
-      console.log(response.message);
     },
 
     onError: (error: any) => {
@@ -164,7 +163,7 @@ export const useBibliography = (idModule: string) => {
   };
 };
 
-export const useVideoConference = (idModule: string) => {
+export const useVideoConference = (idModule: number) => {
   const queryClient = useQueryClient();
 
   const videoConferenceQuery = useQuery({
@@ -178,12 +177,12 @@ export const useVideoConference = (idModule: string) => {
     mutationFn: async (url: string) =>
       insertVideoConferenceByModule(idModule, url),
 
-    onSuccess: (response) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["videoConference", idModule],
       });
       videoConferenceQuery.refetch();
-      alert(response.message);
+      alert("Videoconferencia insertada con exito!");
     },
 
     onError: (error: any) => {
@@ -195,12 +194,12 @@ export const useVideoConference = (idModule: string) => {
   const deleteVideoConferenceMutation = useMutation({
     mutationFn: deleteInfoFromModule,
 
-    onSuccess: (response) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["videoConference", idModule],
       });
       videoConferenceQuery.refetch();
-      console.log(response.message);
+      alert("Contenido borrado exitosamente");
     },
 
     onError: (error: any) => {
@@ -230,12 +229,12 @@ export const useExtraContent = (idModule: string) => {
     mutationFn: async (data: ExtraContent[]) =>
       insertExtraContentByModule(idModule, data),
 
-    onSuccess: (response) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["extraContent", idModule],
       });
       extraContentQuery.refetch();
-      alert(response.message);
+      alert("Contenido borrado exitosamente");
     },
 
     onError: (error: any) => {

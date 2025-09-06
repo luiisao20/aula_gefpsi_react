@@ -8,7 +8,7 @@ import { HomeScreen } from "./views/Home";
 import { ProfileIndex } from "./views/profile";
 
 import { Password } from "./views/profile/Password";
-import { Payments } from "./views/profile/Payments";
+import { GradesScreen } from "./views/profile/Grades";
 import { Profile } from "./views/profile/Profile";
 
 import { NoticesScreen } from "./views/Notices";
@@ -25,6 +25,11 @@ import { ExamModule } from "./views/generals/modules/ExamModule";
 import { StudentsScreen } from "./views/generals/StudentsScreen";
 import { StudentIndex } from "./views/generals/students";
 import { StudentModule } from "./views/generals/students/StudentModule";
+import { StudentTasks } from "./views/generals/students/StudentTasks";
+import { GradesIndex } from "./views/generals/grades";
+import { GradesStudents } from "./views/generals/grades/Students";
+import { StudentGrades } from "./views/generals/grades/StudentGrades";
+import { GradesConferences } from "./views/generals/grades/Conferences";
 
 import { ModulesStudent } from "./views/modules";
 import { ModuleInfoStudent } from "./views/modules/module/InfoStudent";
@@ -34,7 +39,7 @@ import { ExamIndex } from "./views/modules/module/ExamIndex";
 import { ExamScreen } from "./views/modules/module/ExamScreen";
 import { StudentModules } from "./views/generals/students/StudentModules";
 import { StudentExam } from "./views/generals/students/StudentExam";
-import { StudentTasks } from "./views/generals/students/StudentTasks";
+import { AdsScreen } from "./views/generals/AdsScreen";
 
 const root = document.getElementById("root")!;
 
@@ -51,7 +56,7 @@ ReactDOM.createRoot(root).render(
           <Route path="profile" element={<ProfileIndex />}>
             <Route path="main" element={<Profile />} />
             <Route path="password" element={<Password />} />
-            <Route path="payments" element={<Payments />} />
+            <Route path="grades" element={<GradesScreen />} />
           </Route>
           <Route path="library" element={<LibraryIndex />} />
           <Route path="library/:category" element={<CategoryScreen />} />
@@ -70,6 +75,12 @@ ReactDOM.createRoot(root).render(
                 <Route path="tasks" element={<StudentTasks />} />
               </Route>
             </Route>
+            <Route path="grades" element={<GradesIndex />}>
+              <Route path="conferences" element={<GradesConferences />} />
+              <Route path="students" element={<GradesStudents />} />
+              <Route path="students/:id" element={<StudentGrades />} />
+            </Route>
+            <Route path="ads" element={<AdsScreen />} />
           </Route>
           <Route path="modules" element={<ModulesStudent />} />
           <Route path="module/:id" element={<ModuleStudent />}>

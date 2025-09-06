@@ -3,8 +3,8 @@ import { Sidebar } from "../../components/Sidebar";
 import { BsPersonFillGear } from "react-icons/bs";
 import type { ReactElement } from "react";
 import { RiLockPasswordFill } from "react-icons/ri";
-import { IoIosCard } from "react-icons/io";
-import { MdLogout } from "react-icons/md";
+import { MdOutlineGrade } from "react-icons/md";
+import { useAuthStore } from "../../presentation/auth/useAuthStore";
 
 export interface SideRoute {
   name: string;
@@ -25,19 +25,22 @@ export const ProfileIndex = () => {
       icon: <RiLockPasswordFill size={25} />,
     },
     {
-      name: "Pagos",
-      route: "/profile/payments",
-      icon: <IoIosCard size={25} />,
-    },
-    {
-      name: "Cerrar sesión",
-      route: "/",
-      icon: <MdLogout size={25} />,
+      name: "Calificaciones",
+      route: "/profile/grades",
+      icon: <MdOutlineGrade size={25} />,
     },
   ];
+
+  const { loading, logout } = useAuthStore();
+
   return (
     <div className="my-20">
-      <Sidebar routes={routes} />
+      <Sidebar
+        loadingLogout={loading}
+        onLogout={logout}
+        profile
+        routes={routes}
+      />
       <div className="md:w-1/2 mx-auto">
         <Outlet />
       </div>

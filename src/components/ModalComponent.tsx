@@ -185,7 +185,6 @@ export const ModalForm = forwardRef<ModalRef, PropsCrud>((_, ref) => {
     title: "",
     number: 0,
     professor: "",
-    subject: "",
   };
   const { moduleMutation } = useModules();
   const [alertForm, setAlertForm] = useState<{
@@ -353,29 +352,6 @@ export const ModalForm = forwardRef<ModalRef, PropsCrud>((_, ref) => {
                       touched={touched}
                     />
                   </div>
-                  <div>
-                    <label
-                      htmlFor="subject"
-                      className="block mb-2 text-sm font-medium text-gray-900"
-                    >
-                      Materia
-                    </label>
-                    <input
-                      type="text"
-                      name="subject"
-                      id="subject"
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary/60 focus:border-primary/60 block w-full p-2.5"
-                      placeholder="Escribe la materia del módulo"
-                      value={values.subject}
-                      onChange={handleChange("subject")}
-                      onBlur={handleBlur("subject")}
-                    />
-                    <CustomErrorMessage
-                      name="subject"
-                      errors={errors}
-                      touched={touched}
-                    />
-                  </div>
                 </div>
                 {alertForm.show && (
                   <MessageForm
@@ -416,7 +392,6 @@ export const ModalTask = forwardRef<ModalRef, TaskCrud>(({ moduleId }, ref) => {
     dueDate: new Date(),
     instructions: "",
     idModule: moduleId,
-    publishedDate: new Date(),
   };
   const { tasksMutation } = useTasks(moduleId);
   const [alertForm, setAlertForm] = useState<{
