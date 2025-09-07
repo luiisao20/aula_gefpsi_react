@@ -7,6 +7,7 @@ import type { Student } from "../interfaces/Students";
 import { Colors } from "../assets/colors";
 import { Link } from "react-router";
 import type { ModuleGrade, StudentGradeModule } from "../interfaces/Grades";
+import { IoSearchOutline } from "react-icons/io5";
 
 interface Props {
   payments: Payment[];
@@ -173,10 +174,12 @@ export const TableBooks = ({ books }: BooksProps) => {
 
 interface StudentsProps {
   students: Student[] | StudentGradeModule[];
-
   grades?: boolean;
   idModule?: number;
   module?: boolean;
+  search?: string;
+
+  onChangeSearch?: (value: string) => void;
 }
 
 export const TableStudents = ({
@@ -184,6 +187,9 @@ export const TableStudents = ({
   grades,
   idModule,
   module,
+  search,
+
+  onChangeSearch,
 }: StudentsProps) => {
   const goRoute = (id: number): string => {
     if (grades) return `/generals/student/${id}/module/${idModule}/exam`;
@@ -197,6 +203,30 @@ export const TableStudents = ({
         <h2 className="text-center font-bold my-6 text-2xl text-secondary">
           Listado de estudiantes
         </h2>
+      )}
+      {onChangeSearch && (
+        <div className="max-w-md mx-auto mb-6">
+          <label
+            htmlFor="default-search"
+            className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
+          >
+            Search
+          </label>
+          <div className="relative">
+            <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+              <IoSearchOutline className="w-6 h-6 text-gray-500" />
+            </div>
+            <input
+              value={search}
+              onChange={(e) => onChangeSearch && onChangeSearch(e.target.value)}
+              type="search"
+              id="default-search"
+              className="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Busca por nombres o apellidos"
+              required
+            />
+          </div>
+        </div>
       )}
       <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
         <table className="w-full text-sm text-left rtl:text-right text-gray-500">

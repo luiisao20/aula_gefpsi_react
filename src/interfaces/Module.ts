@@ -1,3 +1,5 @@
+import type { Dayjs } from "dayjs";
+
 export interface Module {
   id?: number;
   title: string;
@@ -42,7 +44,7 @@ export interface ExtraContent {
 export interface Task {
   id?: number;
   title: string;
-  dueDate: Date;
+  dueDate: Dayjs | null;
   instructions: string;
   publishedDate?: Date;
   idModule: string;
@@ -52,7 +54,7 @@ export interface Task {
 export interface Exam {
   id?: number;
   idModule?: number;
-  dueDate?: Date;
+  dueDate?: Dayjs | null;
   status?: boolean;
 }
 

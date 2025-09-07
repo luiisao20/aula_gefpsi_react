@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import {
   createExamByModule,
+  getExamByGeneral,
   getExamByModule,
   getQuestionTypes,
   updateExam,
@@ -26,6 +27,12 @@ import type { AnswerExam } from "../../views/modules/module/ExamScreen";
 export const useExam = (idModule: string) => {
   const queryClient = useQueryClient();
 
+  const examGeneralQuery = useQuery({
+    queryFn: () => getExamByGeneral(idModule),
+    queryKey: ["examGeneral", idModule],
+    staleTime: 1000 * 60 * 60,
+  });
+
   const examQuery = useQuery({
     queryFn: () => getExamByModule(idModule),
     queryKey: ["exam", idModule],
@@ -34,13 +41,16 @@ export const useExam = (idModule: string) => {
 
   const examMutate = useMutation({
     mutationFn: async (exam: Exam) => {
-      if (!exam) return await createExamByModule(idModule.toString());
+      if (!exam.id) return await createExamByModule(idModule.toString());
       return await updateExam(exam);
     },
 
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["exam", idModule],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["examGeneral", idModule],
       });
       alert("Examen publicado!");
     },
@@ -50,7 +60,7 @@ export const useExam = (idModule: string) => {
     },
   });
 
-  return { examQuery, examMutate };
+  return { examQuery, examMutate, examGeneralQuery };
 };
 
 export const useTypes = () => {

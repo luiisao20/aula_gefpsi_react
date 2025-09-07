@@ -19,6 +19,7 @@ import { useModules } from "../presentation/modules/useModules";
 import { MessageForm } from "./MessageForm";
 import { CustomDatePicker } from "./DatePicker";
 import { useTasks } from "../presentation/modules/useTasks";
+import dayjs from "dayjs";
 
 export interface ModalRef {
   show: () => void;
@@ -389,7 +390,7 @@ export const ModalTask = forwardRef<ModalRef, TaskCrud>(({ moduleId }, ref) => {
   const [modal, setModal] = useState<ModalInterface>();
   const task: Task = {
     title: "",
-    dueDate: new Date(),
+    dueDate: dayjs(new Date()),
     instructions: "",
     idModule: moduleId,
   };

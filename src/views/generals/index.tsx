@@ -16,7 +16,7 @@ export const GeneralScreen = () => {
       icon: <IoIosCreate size={25} />,
     },
     {
-      name: "Estudianes",
+      name: "Estudiantes",
       route: "/generals/students",
       icon: <PiStudentBold size={25} />,
     },

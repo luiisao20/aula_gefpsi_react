@@ -43,10 +43,7 @@ export const ExamIndex = () => {
       </h2>
       <h2 className="text-lg font-semibold text-secondary">Instrucciones:</h2>
       <p className="whitespace-pre-line text-base text-justify mx-6">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio nemo sint
-        necessitatibus unde aut iste, earum totam distinctio cupiditate est?
-        Architecto nulla, ratione animi itaque deserunt exercitationem natus
-        debitis hic.
+        La evaluación está disponible hasta la fecha señalada
       </p>
       <h2 className="text-base my-4">
         <span className="font-semibold">Examen disponible hasta: </span>

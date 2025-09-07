@@ -24,3 +24,5 @@ dist-ssr
 *.sw?
 
 .env
+.vercel
+preguntas.excalidraw.png

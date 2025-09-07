@@ -4,6 +4,7 @@ import {
   getExamByStudent,
   getGradeByStudent,
   getStudent,
+  searchStudents,
   updateGradeQuestionsByStudent,
 } from "../../core/database/students/students.action";
 import type { GradesByQuestion } from "../../views/generals/students/StudentExam";
@@ -13,10 +14,13 @@ import {
   updateBiography,
 } from "../../core/database/users/user.action";
 
-export const useStudents = () => {
+export const useStudents = (searchText: string) => {
   const studentsQuery = useQuery({
-    queryFn: () => getAllStudents(),
-    queryKey: ["students"],
+    queryFn: () =>
+      searchText.length > 0
+        ? searchStudents(searchText)
+        : getAllStudents(),
+    queryKey: ["students", searchText],
     staleTime: 1000 * 60 * 60,
   });
 
@@ -99,12 +103,12 @@ export const useAnswers = (idStudent: string, idExam: string) => {
       grades,
       totalGrade,
       update,
-      idModule
+      idModule,
     }: {
       grades: GradesByQuestion[];
       totalGrade: number;
       update?: boolean;
-      idModule: string
+      idModule: string;
     }) =>
       await updateGradeQuestionsByStudent(
         idStudent,
@@ -122,7 +126,7 @@ export const useAnswers = (idStudent: string, idExam: string) => {
       queryClient.invalidateQueries({
         queryKey: ["grade", idStudent, idExam],
       });
-      alert('La calificación se subió con éxito');
+      alert("La calificación se subió con éxito");
     },
 
     onError: (err) => {

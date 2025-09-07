@@ -39,7 +39,7 @@ export const ExamModule = () => {
   const [optionsList, setOptionsList] = useState<Option[]>([]);
   const [errorOpt, setErrorOpt] = useState<ErrorOption>();
 
-  const { examQuery, examMutate } = useExam(id!);
+  const { examGeneralQuery, examMutate } = useExam(id!);
   const { typesQuery } = useTypes();
   const {
     questionsQuery,
@@ -49,8 +49,8 @@ export const ExamModule = () => {
   } = useQuestions(examData?.id?.toString());
 
   useEffect(() => {
-    if (examQuery.data) setExamData(examQuery.data);
-  }, [examQuery.data]);
+    if (examGeneralQuery.data) setExamData(examGeneralQuery.data);
+  }, [examGeneralQuery.data]);
 
   useEffect(() => {
     if (typesQuery.data) setExamTypes(typesQuery.data);
@@ -141,38 +141,40 @@ export const ExamModule = () => {
           <h2 className="text-lg my-4 font-semibold text-center text-secondary">
             Examen
           </h2>
-          <div className="flex flex-col pb-4 md:flex-row md:justify-between items-center border-b border-secondary">
-            <div className="flex flex-col space-y-2">
-              <p className="font-semibold">Habilitado hasta:</p>
-              <CustomDatePicker
-                selected={examData.dueDate ?? new Date()}
-                onChange={(date) =>
-                  setExamData({ ...examData, dueDate: date! })
-                }
-              />
-            </div>
-            <div>
-              <div className="flex items-center gap-4 mt-2 ml-4">
-                <ToggleComponent
-                  id={`${id}`}
-                  checked={examData.status ?? false}
-                  onChange={(checked) =>
-                    setExamData({ ...examData, status: checked })
+          <div className="flex flex-col pb-4 space-y-3 border-b border-secondary">
+            <div className="flex flex-row justify-between items-center">
+              <div className="flex flex-col space-y-2">
+                <p className="font-semibold">Habilitado hasta:</p>
+                <CustomDatePicker
+                  selected={examData.dueDate!}
+                  onChange={(date) =>
+                    setExamData({ ...examData, dueDate: date })
                   }
                 />
-                <p className="font-semibold text-secondary">
-                  {examData.status ? "Habilitado" : "Deshabilitado"}
-                </p>
+              </div>
+              <div>
+                <div className="flex items-center gap-4 mt-2 ml-4">
+                  <ToggleComponent
+                    id={`${id}`}
+                    checked={examData.status ?? false}
+                    onChange={(checked) =>
+                      setExamData({ ...examData, status: checked })
+                    }
+                  />
+                  <p className="font-semibold text-secondary">
+                    {examData.status ? "Habilitado" : "Deshabilitado"}
+                  </p>
+                </div>
               </div>
             </div>
             <button
               onClick={() =>
                 examMutate.mutate({
                   ...examData,
-                  dueDate: examData.dueDate ?? new Date(),
+                  dueDate: examData.dueDate,
                 })
               }
-              className="p-2 cursor-pointer bg-secondary hover:bg-secondary/60 text-white rounded-xl"
+              className="p-2 cursor-pointer bg-secondary hover:bg-secondary/60 text-white rounded-xl place-self-center"
             >
               Actualizar información
             </button>

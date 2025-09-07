@@ -26,6 +26,29 @@ export const getAllStudents = async (): Promise<Student[]> => {
   return students;
 };
 
+export const searchStudents = async (value: string): Promise<Student[]> => {
+  const students: Student[] = [];
+  
+  
+  const { data, error } = await supabase.rpc("search_all_user_info", {
+    search_text: value.toLowerCase(),
+  });
+
+  if (error) throw new Error(error.message);
+
+  for (const element of data) {
+    students.push({
+      biography: element.biography,
+      email: element.email,
+      firstName: element.first_name,
+      id: element.id,
+      lastName: element.last_name,
+      urlPhoto: element.url_photo,
+    });
+  }
+  return students;
+};
+
 export const getStudent = async (idStudent: string): Promise<Student> => {
   const { data, error } = await supabase
     .rpc("get_user_info", {
