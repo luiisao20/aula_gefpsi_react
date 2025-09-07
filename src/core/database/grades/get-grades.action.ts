@@ -58,15 +58,17 @@ export const getGradesByStudent = async (
   for (const element of data) {
     const { graded_at, id_exam, modules, total_grade } = element;
 
-    grades.push({
-      grade: total_grade,
-      gradedAt: graded_at,
-      idExam: id_exam,
-      idModule: modules.id,
-      module: modules.module_number,
-    });
+    if (modules && !Array.isArray(modules) && 'id' in modules && 'module_number' in modules) {
+      const mod = modules as { id: number; module_number: number };
+      grades.push({
+        grade: total_grade,
+        gradedAt: graded_at,
+        idExam: id_exam,
+        idModule: mod.id,
+        module: mod.module_number,
+      });
+    }
   }
 
   return grades;
-
 };
