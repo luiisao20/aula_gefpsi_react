@@ -22,6 +22,7 @@ export const useStudentGrades = (idStudent: string) => {
     queryFn: () => getGradesByStudent(idStudent),
     queryKey: ["studentGrades", idStudent],
     staleTime: 1000 * 60 * 60,
+    enabled: !!idStudent
   });
 
   return { gradesQuery };
