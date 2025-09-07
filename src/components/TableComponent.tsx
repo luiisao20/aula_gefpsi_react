@@ -101,7 +101,7 @@ export const TableNotices = ({ notices }: NoticesProps) => {
               </td>
               <td className="px-3 py-4 font-semibold">{item.title}</td>
               <td className="px-3 py-4">
-                <p>{item.description}</p>
+                <p className="whitespace-pre-line">{item.description}</p>
               </td>
               <th
                 scope="row"
@@ -272,7 +272,7 @@ export const TableStudents = ({
 
 interface GradesProps {
   grades: ModuleGrade[];
-  idStudent: number;
+  idStudent?: number;
 }
 
 export const TableGrades = ({ grades, idStudent }: GradesProps) => {
@@ -290,9 +290,11 @@ export const TableGrades = ({ grades, idStudent }: GradesProps) => {
             <th scope="col" className="px-6 py-3">
               Fecha de calificación
             </th>
-            <th scope="col" className="px-6 py-3">
-              Editar
-            </th>
+            {idStudent && (
+              <th scope="col" className="px-6 py-3">
+                Editar
+              </th>
+            )}
           </tr>
         </thead>
         <tbody>
@@ -308,14 +310,16 @@ export const TableGrades = ({ grades, idStudent }: GradesProps) => {
               <td className="px-6 py-4">
                 {getFormattedDate(`${item.gradedAt}`)}
               </td>
-              <td className="px-6 py-4 text-right">
-                <Link
-                  to={`/generals/student/${idStudent}/module/${item.idModule}/exam`}
-                  className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                >
-                  Ir
-                </Link>
-              </td>
+              {idStudent && (
+                <td className="px-6 py-4 text-right">
+                  <Link
+                    to={`/generals/student/${idStudent}/module/${item.idModule}/exam`}
+                    className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                  >
+                    Ir
+                  </Link>
+                </td>
+              )}
             </tr>
           ))}
         </tbody>

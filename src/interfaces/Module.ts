@@ -78,3 +78,9 @@ export interface Option {
 export interface QuestionWithOptions extends Question {
   options: Option[];
 }
+
+export interface ConferenceFile {
+  id?: number;
+  url: string;
+  fileName: string;
+}

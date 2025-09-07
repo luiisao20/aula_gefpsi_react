@@ -17,6 +17,11 @@ import {
 } from "../../core/database/modules/insert-info-by-module.action";
 import { deleteInfoFromModule } from "../../core/database/modules/delete-info-by-modules.action";
 import type { ExtraContent } from "../../interfaces/Module";
+import {
+  deleteConferenceFile,
+  getConferenceFile,
+  uploadConferenceFile,
+} from "../../core/storage/conference-file.action";
 
 export const useObjectives = (idModule: string) => {
   const queryClient = useQueryClient();
@@ -131,7 +136,7 @@ export const useBibliography = (idModule: string) => {
         queryKey: ["bibliography", idModule],
       });
 
-      alert('Contenido ingresado');
+      alert("Contenido ingresado");
     },
 
     onError: (error: any) => {
@@ -264,4 +269,49 @@ export const useExtraContent = (idModule: string) => {
     extraContentQuery,
     deleteExtraContentMutation,
   };
+};
+
+export const useFileByModule = (idModule: string) => {
+  const queryClient = useQueryClient();
+
+  const fileQuery = useQuery({
+    queryFn: () => getConferenceFile(idModule),
+    queryKey: ["file", idModule],
+    staleTime: 1000 * 60 * 60,
+    enabled: false,
+  });
+
+  const fileMutation = useMutation({
+    mutationFn: async (file: File) => uploadConferenceFile(file, idModule),
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["file", idModule],
+      });
+      fileQuery.refetch();
+      alert("Archivo subido con éxito!");
+    },
+    onError: (error: any) => {
+      const message = error.response?.data?.error || "Error desconocido";
+      console.log(message);
+    },
+  });
+
+  const deleteFileMutation = useMutation({
+    mutationFn: async () => deleteConferenceFile(idModule),
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["file", idModule],
+      });
+      fileQuery.refetch();
+      alert("Archivo eliminado!");
+    },
+    onError: (error: any) => {
+      const message = error.response?.data?.error || "Error desconocido";
+      console.log(message);
+    },
+  });
+
+  return { fileQuery, fileMutation, deleteFileMutation };
 };

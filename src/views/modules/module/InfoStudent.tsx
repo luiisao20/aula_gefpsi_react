@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { useModule } from "../../../presentation/modules/useModules";
 import type {
+  ConferenceFile,
   ExtraContent,
   Module,
   VideoConference,
@@ -9,6 +10,7 @@ import type {
 import {
   useContents,
   useExtraContent,
+  useFileByModule,
   useVideoConference,
 } from "../../../presentation/modules/useInfoModules";
 
@@ -18,12 +20,18 @@ export const ModuleInfoStudent = () => {
   const [moduleData, setModuleData] = useState<Module>();
   const [contentData, setContentData] = useState<string>("");
   const [videoConference, setVideoConference] = useState<VideoConference>();
+  const [moduleFile, setModuleFile] = useState<ConferenceFile>();
   const [extraContentList, setExtraContentList] = useState<ExtraContent[]>([]);
 
   const { moduleQuery } = useModule(idModule);
   const { contentQuery } = useContents(idModule);
-  const { videoConferenceQuery } = useVideoConference(idModule);
+  const { videoConferenceQuery } = useVideoConference(parseInt(idModule));
   const { extraContentQuery } = useExtraContent(idModule);
+  const { fileQuery } = useFileByModule(idModule);
+
+  useEffect(() => {
+    fileQuery.refetch();
+  }, []);
 
   useEffect(() => {
     contentQuery.refetch();
@@ -36,6 +44,10 @@ export const ModuleInfoStudent = () => {
   useEffect(() => {
     extraContentQuery.refetch();
   }, []);
+
+  useEffect(() => {
+    if (fileQuery.data) setModuleFile(fileQuery.data);
+  }, [fileQuery.data]);
 
   useEffect(() => {
     if (extraContentQuery.data) setExtraContentList(extraContentQuery.data);
@@ -69,6 +81,12 @@ export const ModuleInfoStudent = () => {
           {moduleData?.professor}
         </h2>
       </div>
+      <h2
+        onClick={() => window.open(moduleFile?.url, "_blank")}
+        className="text-lg font-semibold text-secondary mt-4 underline underline-offset-2 cursor-pointer"
+      >
+        Ingresa al pdf de la conferencia.
+      </h2>
       <h2 className="text-lg font-semibold text-secondary mt-4">Resumen:</h2>
       <p className="whitespace-pre-line text-base text-justify mx-4">
         {contentData}

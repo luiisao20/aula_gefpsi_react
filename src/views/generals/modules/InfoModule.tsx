@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router";
-import { FaVideo } from "react-icons/fa6";
+import { FaFileContract, FaVideo } from "react-icons/fa6";
 import { RiBookOpenLine } from "react-icons/ri";
 import { MdDeleteForever, MdKeyboardArrowDown } from "react-icons/md";
 import { LuTableOfContents } from "react-icons/lu";
@@ -12,10 +12,12 @@ import {
   useBibliography,
   useContents,
   useExtraContent,
+  useFileByModule,
   useVideoConference,
 } from "../../../presentation/modules/useInfoModules";
 import type {
   Bibliography,
+  ConferenceFile,
   Content,
   ExtraContent,
   Objective,
@@ -26,6 +28,7 @@ import {
   type ModalRef,
 } from "../../../components/ModalComponent";
 import { CiTextAlignLeft } from "react-icons/ci";
+import { FileInput } from "../../../components/FileInput";
 
 interface ModuleInfo {
   objectives: Objective[];
@@ -33,6 +36,7 @@ interface ModuleInfo {
   bibliographies: Bibliography[];
   videoConference?: VideoConference;
   extraContent: ExtraContent[];
+  file?: ConferenceFile;
 }
 
 interface Inputs {
@@ -66,6 +70,7 @@ export const InfoModule = () => {
     description: "",
     url: "",
   });
+  const [conferenceFile, setConferenceFile] = useState<File | null>();
 
   const modalRef = useRef<ModalRef>(null);
 
@@ -86,6 +91,9 @@ export const InfoModule = () => {
     extraContentMutation,
     extraContentQuery,
   } = useExtraContent(idModule);
+  const { deleteFileMutation, fileMutation, fileQuery } = useFileByModule(
+    `${idModule}`
+  );
 
   useEffect(() => {
     initFlowbite();
@@ -98,6 +106,14 @@ export const InfoModule = () => {
         videoConference: videoConferenceQuery.data,
       }));
   }, [videoConferenceQuery.data]);
+
+  useEffect(() => {
+    if (fileQuery.data)
+      setModuleData((prev) => ({
+        ...prev,
+        file: fileQuery.data,
+      }));
+  }, [fileQuery.data]);
 
   useEffect(() => {
     if (contentQuery.data)
@@ -544,6 +560,71 @@ export const InfoModule = () => {
                   className="bg-secondary text-white my-4 p-2 rounded-xl place-self-end hover:bg-secondary/60 cursor-pointer"
                 >
                   Actualizar Bibliografía
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+        <h2 id="accordion-flush-heading-5">
+          <button
+            type="button"
+            onClick={() => fileQuery.refetch()}
+            className="flex items-center justify-between w-full py-5 font-medium rtl:text-right text-gray-500 border-b border-gray-200 gap-3"
+            data-accordion-target="#accordion-flush-body-5"
+            aria-expanded="false"
+            aria-controls="accordion-flush-body-5"
+          >
+            <div className="flex gap-4">
+              <FaFileContract color={Colors.secondary} />
+              <span>Archivos</span>
+            </div>
+            <MdKeyboardArrowDown size={25} />
+          </button>
+        </h2>
+        <div
+          id="accordion-flush-body-5"
+          className="hidden"
+          aria-labelledby="accordion-flush-heading-5"
+        >
+          <div className="py-5 border-b border-gray-200">
+            {moduleData.file ? (
+              <div>
+                <h2 className="text-lg text-secondary font-semibold text-center mb-4">
+                  Archivo de la conferencia
+                </h2>
+                <div className="flex items-center justify-between">
+                  <a
+                    onClick={() => window.open(moduleData.file?.url, "_blank")}
+                    className="cursor-pointer hover:underline hover:underline-offset-2"
+                  >
+                    {moduleData.file.fileName}
+                  </a>
+                  <MdDeleteForever
+                    className="text-3xl text-danger cursor-pointer"
+                    onClick={async () => {
+                      await deleteFileMutation.mutateAsync();
+                      console.log(moduleData.file);
+                    }}
+                  />
+                </div>
+              </div>
+            ) : (
+              <div className="mx-4 flex flex-col">
+                <div className="relative z-0 w-full mb-5 group">
+                  <FileInput
+                    setFile={(file) => setConferenceFile(file)}
+                    description="Sube el archivo de la conferencia"
+                    format="pdf"
+                  />
+                </div>
+                <button
+                  disabled={fileMutation.isPending}
+                  onClick={() => fileMutation.mutate(conferenceFile!)}
+                  className={`place-self-end p-2 bg-secondary hover:bg-secondary/60 rounded-xl text-white font-semibold cursor-pointer ${
+                    fileMutation.isPending && "cursor-progress"
+                  }`}
+                >
+                  Agregar
                 </button>
               </div>
             )}
