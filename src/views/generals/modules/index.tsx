@@ -43,7 +43,7 @@ export const ModuleScreen = () => {
           </p>
         </div>
       </div>
-      <BreadCumbComponent id={`${id}`} />
+      <BreadCumbComponent />
       <Outlet />
     </div>
   );

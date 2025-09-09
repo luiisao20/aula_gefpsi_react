@@ -4,14 +4,13 @@ import {
   getGradesByModule,
   getGradesByStudent,
 } from "../../core/database/grades/get-grades.action";
-import type {Student} from "../../interfaces/Students";
 
-export const useModuleGrades = (students: Student[], idModule?: number) => {
+export const useModuleGrades = (idModule?: number) => {
   const useGrades = useQuery({
-    queryFn: () => getGradesByModule(idModule!, students),
+    queryFn: () => getGradesByModule(idModule!),
     queryKey: ["moduleGrades", idModule],
     staleTime: 1000 * 60 * 60,
-    enabled: !!idModule && !!students,
+    enabled: !!idModule,
   });
 
   return { useGrades };

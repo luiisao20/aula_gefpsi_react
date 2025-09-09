@@ -12,22 +12,22 @@ export const GeneralScreen = () => {
   const routes: SideRoute[] = [
     {
       name: "Conferencias",
-      route: "/generals/modules",
+      route: "/home/generals/modules",
       icon: <IoIosCreate size={25} />,
     },
     {
       name: "Estudiantes",
-      route: "/generals/students",
+      route: "/home/generals/students",
       icon: <PiStudentBold size={25} />,
     },
     {
       name: "Calificaciones",
-      route: "/generals/grades",
+      route: "/home/generals/grades",
       icon: <MdOutlineGrade size={25} />,
     },
-        {
+    {
       name: "Avisos",
-      route: "/generals/ads",
+      route: "/home/generals/ads",
       icon: <TiWarningOutline size={25} />,
     },
   ];

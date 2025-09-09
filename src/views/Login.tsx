@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router";
 import { InputPassword } from "../components/InputPassword";
 import { ModalComponent, type ModalRef } from "../components/ModalComponent";
 import { useAuthStore } from "../presentation/auth/useAuthStore";
+import { supabase } from "../../supabase";
 
 const Login = () => {
   const [formLogin, setFormLogin] = useState({
@@ -19,14 +20,36 @@ const Login = () => {
   const handleSubmit = async () => {
     const wasSuccessfull = await login(formLogin.email, formLogin.password);
 
-    if (wasSuccessfull) {
+    if (typeof wasSuccessfull !== "string") {
       return navigate("/home");
     }
 
     modalRef.current?.show();
     setModalMsg(
-      "¡Ingreso incorrecto! Correo electrónico o contraseña son inválidos"
+      `¡Ingreso incorrecto! Correo electrónico o contraseña son inválidos. 
+      Codigo de error: ${wasSuccessfull}`
     );
+  };
+
+  const handelRetrievePassword = async () => {
+    if (formLogin.email.trim() === "") {
+      modalRef.current?.show();
+      setModalMsg("Ingresa un correo electrónico");
+      return;
+    }
+
+    const { error } = await supabase.auth.resetPasswordForEmail(
+      formLogin.email
+    );
+
+    if (error) {
+      modalRef.current?.show();
+      setModalMsg(`Ocurrió un error! ${error.message}`);
+      return;
+    }
+
+    modalRef.current?.show();
+    setModalMsg("Revisa tu correo electrónico y restaura tu contraseña");
   };
 
   return (
@@ -39,7 +62,7 @@ const Login = () => {
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
                 Ingresa con tu cuenta
               </h1>
-              <form className="space-y-4 md:space-y-6" action={handleSubmit}>
+              <div className="space-y-4 md:space-y-6">
                 <div>
                   <label
                     htmlFor="email"
@@ -78,6 +101,7 @@ const Login = () => {
                 </div>
                 <div className="flex items-center justify-between">
                   <a
+                    onClick={handelRetrievePassword}
                     href="#"
                     className="text-sm font-medium text-primary-600 hover:underline"
                   >
@@ -86,14 +110,15 @@ const Login = () => {
                 </div>
                 <div className="flex items-center justify-between">
                   <Link
-                  to='/register'
+                    to="/register"
                     className="text-sm font-medium text-primary-600 hover:underline"
                   >
                     Regístrate con tu nueva cuenta
                   </Link>
                 </div>
                 <button
-                  type="submit"
+                  type="button"
+                  onClick={handleSubmit}
                   disabled={loading}
                   className={`w-full text-white bg-primary cursor-pointer hover:bg-primary/70 focus:ring-4 focus:outline-none focus:ring-primary font-medium rounded-lg text-sm px-5 py-2.5 ${
                     loading && "cursor-progress"
@@ -101,7 +126,7 @@ const Login = () => {
                 >
                   Iniciar sesión
                 </button>
-              </form>
+              </div>
             </div>
           </div>
         </div>

@@ -192,9 +192,9 @@ export const TableStudents = ({
   onChangeSearch,
 }: StudentsProps) => {
   const goRoute = (id: number): string => {
-    if (grades) return `/generals/student/${id}/module/${idModule}/exam`;
-    else if (module) return `/generals/grades/students/${id}`;
-    return `/generals/student/${id}`;
+    if (grades) return `/home/generals/student/${id}/module/${idModule}/exam`;
+    else if (module) return `/home/generals/grades/students/${id}`;
+    return `/home/generals/student/${id}`;
   };
 
   return (
@@ -278,9 +278,7 @@ export const TableStudents = ({
                 </th>
                 {grades && (
                   <td className="px-6 py-4 text-base font-semibold">
-                    {"grade" in student && student.state
-                      ? student.grade.toFixed(2)
-                      : "No calificado"}
+                    {"grade" in student ? student.grade ?? "No completado" : ""}
                   </td>
                 )}
                 <td className="px-6 py-4">

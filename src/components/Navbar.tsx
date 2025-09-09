@@ -111,7 +111,7 @@ export const Navbar = ({ admin, loadingLogut, onLogout }: Props) => {
           <ul className="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0">
             <li>
               <Link
-                to="home"
+                to="/home"
                 className="flex cursor-pointer items-center justify-between w-full py-2 px-3 rounded-sm md:w-auto hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-secondary md:p-0"
               >
                 Inicio
@@ -135,7 +135,7 @@ export const Navbar = ({ admin, loadingLogut, onLogout }: Props) => {
             </li> */}
             <li>
               <Link
-                to="/notices"
+                to="notices"
                 className="block py-2 px-3 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-secondary md:p-0 "
               >
                 Avisos
@@ -144,7 +144,7 @@ export const Navbar = ({ admin, loadingLogut, onLogout }: Props) => {
             {admin && (
               <li>
                 <Link
-                  to="/generals/modules"
+                  to="generals/modules"
                   className="block py-2 px-3 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-secondary md:p-0 "
                 >
                   Generales

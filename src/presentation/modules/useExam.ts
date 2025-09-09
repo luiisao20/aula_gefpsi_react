@@ -154,8 +154,13 @@ export const useExamByStudent = (idStudent: string, idExam?: string) => {
   });
 
   const examStudentMutation = useMutation({
-    mutationFn: (data: AnswerExam[]) =>
-      insertStudentExamData(idStudent, idExam!, data),
+    mutationFn: ({
+      data,
+      idModule,
+    }: {
+      data: AnswerExam[];
+      idModule: string;
+    }) => insertStudentExamData(idStudent, idModule, idExam!, data),
 
     onSuccess: () => {
       queryClient.invalidateQueries({

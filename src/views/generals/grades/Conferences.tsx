@@ -7,7 +7,6 @@ import type { Module } from "../../../interfaces/Module";
 import { useModuleGrades } from "../../../presentation/grades/useGrades";
 import type { StudentGradeModule } from "../../../interfaces/Grades";
 import { TableStudents } from "../../../components/TableComponent";
-import { useStudents } from "../../../presentation/student/useStudent";
 import { LoaderComponent } from "../../../components/SpinnerComponent";
 
 export const GradesConferences = () => {
@@ -18,8 +17,7 @@ export const GradesConferences = () => {
 
   const { moduleQuery } = useModule(selectedId?.toString());
   const { modulesQuery } = useModules();
-  const { studentsQuery } = useStudents("");
-  const { useGrades } = useModuleGrades(studentsQuery.data!, moduleData?.id);
+  const { useGrades } = useModuleGrades(moduleData?.id);
 
   useEffect(() => {
     if (modulesQuery.data) setModulesData(modulesQuery.data);

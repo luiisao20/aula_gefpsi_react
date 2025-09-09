@@ -16,17 +16,17 @@ export const ProfileIndex = () => {
   const routes: SideRoute[] = [
     {
       name: "Perfil",
-      route: "/profile/main",
+      route: "main",
       icon: <BsPersonFillGear size={25} />,
     },
     {
       name: "Contraseña",
-      route: "/profile/password",
+      route: "password",
       icon: <RiLockPasswordFill size={25} />,
     },
     {
       name: "Calificaciones",
-      route: "/profile/grades",
+      route: "grades",
       icon: <MdOutlineGrade size={25} />,
     },
   ];

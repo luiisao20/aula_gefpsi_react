@@ -2,9 +2,15 @@ const opciones: Intl.DateTimeFormatOptions = {
   year: "numeric",
   month: "short",
   day: "numeric",
+  hour: "2-digit",
+  minute: "2-digit",
+  second: "2-digit",
+  hour12: false,
 };
 
-export const getFormattedDate = (date: string): string | null =>
-  new Date(date).toLocaleDateString("es-es", opciones) === "Invalid Date"
+export const getFormattedDate = (date: string): string | null => {
+  const fecha = new Date(date);
+  return isNaN(fecha.getTime())
     ? null
-    : new Date(date).toLocaleDateString("es-es", opciones);
+    : fecha.toLocaleString("es-ES", opciones);
+};

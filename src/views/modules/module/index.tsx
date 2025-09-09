@@ -17,17 +17,17 @@ export const ModuleStudent = () => {
   const routes: SideRoute[] = [
     {
       name: "Inicio",
-      route: `/module/${id}/info`,
+      route: `info`,
       icon: <FaHome size={25} />,
     },
     {
       name: "Bibliografía",
-      route: `/module/${id}/bibliography`,
+      route: `bibliography`,
       icon: <ImBooks size={25} />,
     },
     {
       name: "Evaluación",
-      route: `/module/${id}/eval`,
+      route: `eval`,
       icon: <HiPencilSquare size={25} />,
     },
   ];

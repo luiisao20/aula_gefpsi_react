@@ -21,11 +21,11 @@ export const ModulesList = ({
   const getRouteType = (idModule: number) => {
     switch (route) {
       case "module":
-        return `/module/${idModule}/info`;
+        return `/home/module/${idModule}/info`;
       case "generals":
-        return `/generals/module/${idModule}/info`;
+        return `/home/generals/module/${idModule}/info`;
       case "students":
-        return `module/${idModule}/exam`;
+        return `/home/module/${idModule}/exam`;
     }
   };
 

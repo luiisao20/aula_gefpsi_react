@@ -14,7 +14,8 @@ export const getExamData = async (idExam: string): Promise<ExamData[]> => {
         id_type,
         options (
           id,
-          text
+          text,
+          is_correct
         )
       `
     )
@@ -32,6 +33,7 @@ export const getExamData = async (idExam: string): Promise<ExamData[]> => {
           ? element.options.map((opt: any) => ({
               id: opt.id,
               option: opt.text,
+              isCorrect: opt.is_correct
             }))
           : [],
     });
@@ -44,6 +46,8 @@ export const getStateExamStudent = async (
   idStudent: string,
   idExam: string
 ) => {
+  console.log(idStudent);
+  
   const { data, error } = await supabase
     .from("student_answers")
     .select("id_student")

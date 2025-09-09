@@ -3,8 +3,8 @@ export interface StudentGradeModule {
   email: string;
   firstName: string;
   lastName: string;
-  state: boolean;
-  grade: number;
+  state?: boolean;
+  grade: number | string;
   urlPhoto: string;
 }
 

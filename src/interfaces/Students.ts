@@ -8,9 +8,10 @@ export interface Student {
   admin?: boolean;
 }
 
-interface Option {
+export interface Option {
   id: number;
   option: string;
+  isCorrect: boolean;
 }
 
 export interface ExamData {

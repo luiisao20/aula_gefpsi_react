@@ -2,9 +2,8 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 
 import Stack from "@mui/material/Stack";
-import Pagination from "@mui/material/Pagination";
 
-import type { ExamData } from "../../../interfaces/Students";
+import type { ExamData, Option } from "../../../interfaces/Students";
 import { useQuestionsExam } from "../../../presentation/student/useExam";
 import { ModalReact } from "../../../components/ModalReact";
 import { useExamByStudent } from "../../../presentation/modules/useExam";
@@ -16,6 +15,7 @@ export interface AnswerExam {
   idOption?: number;
   idType: number;
   text?: string;
+  grade?: number;
 }
 
 export interface ModalReactProps {
@@ -27,14 +27,11 @@ export interface ModalReactProps {
 }
 
 export const ExamScreen = () => {
-  const { idEval } = useParams();
+  const { id, idEval } = useParams();
   const navigate = useNavigate();
   const { user } = useAuthStore();
 
   const [examDataList, setExamDataList] = useState<ExamData[]>([]);
-  const [page, setPage] = useState<number>(1);
-  const [totalPages, setTotalPages] = useState<number>(0);
-  const [currentItems, setCurrentItems] = useState<ExamData[]>([]);
   const [answersExam, setAnswersExam] = useState<AnswerExam[]>([]);
   const [modalProps, setModalProps] = useState<ModalReactProps>({
     message: "",
@@ -46,15 +43,9 @@ export const ExamScreen = () => {
     idEval
   );
   const { questionsStudentQuery } = useQuestionsExam(`${idEval}`);
-  const itemsPerPage = 5;
 
   useEffect(() => {
-    if (questionsStudentQuery.data) {
-      const data = questionsStudentQuery.data;
-      setExamDataList(data);
-      setTotalPages(Math.ceil(data.length / itemsPerPage));
-      setPage(1);
-    }
+    if (questionsStudentQuery.data) setExamDataList(questionsStudentQuery.data);
   }, [questionsStudentQuery.data]);
 
   useEffect(() => {
@@ -67,20 +58,12 @@ export const ExamScreen = () => {
     }
   }, [questionsStudentQuery.data]);
 
-  useEffect(() => {
-    const startIndex = (page - 1) * itemsPerPage;
-    const sliced = examDataList.slice(startIndex, startIndex + itemsPerPage);
-    setCurrentItems(sliced);
-  }, [page, examDataList]);
-
-  const handleChange = (value: number) => {
-    setPage(value);
-  };
-
-  const handleSelectOption = (idQuestion: number, idOption: number) => {
+  const handleSelectOption = (idQuestion: number, option: Option) => {
     setAnswersExam((prev) =>
       prev.map((a) =>
-        a.idQuestion === idQuestion ? { ...a, idOption: idOption } : a
+        a.idQuestion === idQuestion
+          ? { ...a, idOption: option.id, grade: option.isCorrect ? 1 : 0 }
+          : a
       )
     );
   };
@@ -134,7 +117,10 @@ export const ExamScreen = () => {
   };
 
   const handleSendData = async () => {
-    await examStudentMutation.mutateAsync(answersExam);
+    await examStudentMutation.mutateAsync({
+      data: answersExam,
+      idModule: `${id}`,
+    });
     alert("Examen publicado");
     navigate(-1);
   };
@@ -162,15 +148,8 @@ export const ExamScreen = () => {
       <p className="font-semibold text-base my-4">
         Sólo hay una opción correcta en las preguntas de opción múltiple.
       </p>
-      <div className="flex justify-end">
-        <Pagination
-          count={totalPages}
-          page={page}
-          onChange={(_, value) => handleChange(value)}
-        />
-      </div>
       <Stack className="my-4" spacing={2}>
-        {currentItems.map((item, index) => (
+        {examDataList.map((item, index) => (
           <div key={index} className="px-6">
             {item.idType === 1 ? (
               <div className="flex flex-col space-y-4">
@@ -189,7 +168,7 @@ export const ExamScreen = () => {
                       checked={
                         answersExam.some((e) => e.idOption === opt.id) ?? false
                       }
-                      onChange={() => handleSelectOption(item.id, opt.id)}
+                      onChange={() => handleSelectOption(item.id, opt)}
                       name={`question-${index}`}
                       value="USA"
                       className="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-primary/30"
@@ -231,11 +210,6 @@ export const ExamScreen = () => {
           </div>
         ))}
         <div className="flex flex-col items-end justify-end">
-          <Pagination
-            count={totalPages}
-            page={page}
-            onChange={(_, value) => handleChange(value)}
-          />
           <button
             onClick={handleShowModal}
             className="px-4 py-2 bg-secondary hover:bg-secondary/60 cursor-pointer text-white font-semibold rounded-xl"

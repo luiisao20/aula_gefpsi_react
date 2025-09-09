@@ -14,7 +14,7 @@ interface AuthState {
   authSubscription?: Subscription;
   loading: boolean;
 
-  login: (email: string, password: string) => Promise<boolean>;
+  login: (email: string, password: string) => Promise<boolean | string>;
   checkStatus: () => Promise<void>;
   changeStatus: (session?: Session, user?: User) => Promise<boolean>;
   logout: () => Promise<void>;
@@ -34,19 +34,25 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
 
   login: async (email: string, password: string) => {
     set({ loading: true });
-    const res = await authLogin(email, password);
-    set({ loading: false });
-
-    return get().changeStatus(res?.session, res?.user);
+    try {
+      const res = await authLogin(email, password);
+      return get().changeStatus(res?.session, res?.user);
+    } catch (error: any) {
+      console.log(error);
+      return error.message;
+    } finally {
+      set({ loading: false });
+    }
   },
 
   checkStatus: async () => {
     const {
       data: { session },
     } = await supabase.auth.getSession();
+
     await get().changeStatus(session ?? undefined, session?.user);
 
-    if (!session) console.log("error");
+    if (!session) set({ status: "unauthenticated" });
 
     const {
       data: { subscription },

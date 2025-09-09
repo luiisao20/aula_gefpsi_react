@@ -41,6 +41,7 @@ import { ExamScreen } from "./views/modules/module/ExamScreen";
 import { StudentModules } from "./views/generals/students/StudentModules";
 import { StudentExam } from "./views/generals/students/StudentExam";
 import { AdsScreen } from "./views/generals/AdsScreen";
+import { AuthenticatedScreen } from "./views/AuthenticatedScreen";
 
 const root = document.getElementById("root")!;
 
@@ -53,46 +54,48 @@ ReactDOM.createRoot(root).render(
         <Route element={<App />}>
           <Route index element={<Login />} />
           <Route path="register" element={<RegisterScreen />} />
-          <Route path="home" element={<HomeScreen />} />
-          <Route path="notices" element={<NoticesScreen />} />
-          <Route path="profile" element={<ProfileIndex />}>
-            <Route path="main" element={<Profile />} />
-            <Route path="password" element={<Password />} />
-            <Route path="grades" element={<GradesScreen />} />
-          </Route>
-          <Route path="library" element={<LibraryIndex />} />
-          <Route path="library/:category" element={<CategoryScreen />} />
-          <Route path="generals" element={<GeneralScreen />}>
-            <Route path="modules" element={<ModulesScreen />} />
-            <Route path="module/:id" element={<ModuleScreen />}>
-              <Route path="info" element={<InfoModule />} />
-              <Route path="tasks" element={<TasksModule />} />
-              <Route path="exam" element={<ExamModule />} />
+          <Route path="home" element={<AuthenticatedScreen />}>
+            <Route index element={<HomeScreen />} />
+            <Route path="notices" element={<NoticesScreen />} />
+            <Route path="profile" element={<ProfileIndex />}>
+              <Route path="main" element={<Profile />} />
+              <Route path="password" element={<Password />} />
+              <Route path="grades" element={<GradesScreen />} />
             </Route>
-            <Route path="students" element={<StudentsScreen />} />
-            <Route path="student/:id" element={<StudentIndex />}>
-              <Route index element={<StudentModules />} />
-              <Route path="module/:idModule" element={<StudentModule />}>
-                <Route path="exam" element={<StudentExam />} />
-                <Route path="tasks" element={<StudentTasks />} />
+            <Route path="library" element={<LibraryIndex />} />
+            <Route path="library/:category" element={<CategoryScreen />} />
+            <Route path="generals" element={<GeneralScreen />}>
+              <Route path="modules" element={<ModulesScreen />} />
+              <Route path="module/:id" element={<ModuleScreen />}>
+                <Route path="info" element={<InfoModule />} />
+                <Route path="tasks" element={<TasksModule />} />
+                <Route path="exam" element={<ExamModule />} />
               </Route>
+              <Route path="students" element={<StudentsScreen />} />
+              <Route path="student/:id" element={<StudentIndex />}>
+                <Route index element={<StudentModules />} />
+                <Route path="module/:idModule" element={<StudentModule />}>
+                  <Route path="exam" element={<StudentExam />} />
+                  <Route path="tasks" element={<StudentTasks />} />
+                </Route>
+              </Route>
+              <Route path="grades" element={<GradesIndex />}>
+                <Route path="conferences" element={<GradesConferences />} />
+                <Route path="students" element={<GradesStudents />} />
+                <Route path="students/:id" element={<StudentGrades />} />
+              </Route>
+              <Route path="ads" element={<AdsScreen />} />
             </Route>
-            <Route path="grades" element={<GradesIndex />}>
-              <Route path="conferences" element={<GradesConferences />} />
-              <Route path="students" element={<GradesStudents />} />
-              <Route path="students/:id" element={<StudentGrades />} />
+            <Route path="modules" element={<ModulesStudent />} />
+            <Route path="module/:id" element={<ModuleStudent />}>
+              <Route path="info" element={<ModuleInfoStudent />} />
+              <Route
+                path="bibliography"
+                element={<ModuleBibliographyStudent />}
+              />
+              <Route path="eval" element={<ExamIndex />} />
+              <Route path="eval/:idEval" element={<ExamScreen />} />
             </Route>
-            <Route path="ads" element={<AdsScreen />} />
-          </Route>
-          <Route path="modules" element={<ModulesStudent />} />
-          <Route path="module/:id" element={<ModuleStudent />}>
-            <Route path="info" element={<ModuleInfoStudent />} />
-            <Route
-              path="bibliography"
-              element={<ModuleBibliographyStudent />}
-            />
-            <Route path="eval" element={<ExamIndex />} />
-            <Route path="eval/:idEval" element={<ExamScreen />} />
           </Route>
         </Route>
       </Routes>

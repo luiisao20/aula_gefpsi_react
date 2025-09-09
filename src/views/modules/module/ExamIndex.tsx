@@ -7,7 +7,7 @@ import {
 import { useNavigate, useParams } from "react-router";
 import { getFormattedDate } from "../../../actions/get-date-formatted";
 import { useAuthStore } from "../../../presentation/auth/useAuthStore";
-import {LoaderComponent} from "../../../components/SpinnerComponent";
+import { LoaderComponent } from "../../../components/SpinnerComponent";
 
 export const ExamIndex = () => {
   const { id } = useParams();
@@ -33,7 +33,7 @@ export const ExamIndex = () => {
   }, [examQuery.data]);
 
   if (examQuery.isLoading || examStudentQuery.isLoading) {
-    return <LoaderComponent />
+    return <LoaderComponent />;
   }
 
   return (
@@ -43,7 +43,17 @@ export const ExamIndex = () => {
       </h2>
       <h2 className="text-lg font-semibold text-secondary">Instrucciones:</h2>
       <p className="whitespace-pre-line text-base text-justify mx-6">
-        La evaluación está disponible hasta la fecha señalada
+        La evaluación está disponible hasta la fecha señalada.
+      </p>
+      <p className="whitespace-pre-line text-base text-justify mx-6">
+        Existe una opción correcta por cada pregunta.
+      </p>
+      <p className="whitespace-pre-line text-base text-justify mx-6">
+        Revisa bien antes de enviar el examen, ya que sólo existe un intento.
+      </p>
+      <p className="whitespace-pre-line text-base text-justify mx-6">
+        Si recargas la página antes de enviar los datos, tu progreso se
+        eliminará y debes volver a empezar desde cero.
       </p>
       <h2 className="text-base my-4">
         <span className="font-semibold">Examen disponible hasta: </span>

@@ -3,34 +3,34 @@ import type {
   ModuleGrade,
   StudentGradeModule,
 } from "../../../interfaces/Grades";
-import type { Student } from "../../../interfaces/Students";
 
 export const getGradesByModule = async (
   idModule: number,
-  students: Student[]
 ): Promise<StudentGradeModule[]> => {
   const grades: StudentGradeModule[] = [];
-  for (const element of students) {
-    const { firstName, lastName, email, id, urlPhoto } = element;
-    const { data, error } = await supabase
-      .from("exam_results")
-      .select()
-      .eq("id_module", idModule)
-      .eq("id_student", id);
 
-    if (error) throw new Error(error.message);
+  
+  
+  const { data, error } = await supabase.rpc("get_students_by_grade_status", {
+    module_id: idModule,
+    // has_grade: true
+  });
+  
+  console.log(data);
+  
+  
+  if(error) throw new Error(error.message)
 
+  for (const element of data) {
     grades.push({
-      lastName,
-      firstName,
-      email: email!,
-      urlPhoto: urlPhoto!,
-      grade: data.length > 0 ? data[0].total_grade : 0,
-      id: id!,
-      state: data.length > 0 ? true : false,
+      lastName: element.last_name,
+      firstName: element.first_name,
+      email: element.email,
+      urlPhoto: element.url_photo,
+      grade: element.grade_numeric,
+      id: element.id,
     });
   }
-
   return grades;
 };
 
@@ -58,7 +58,12 @@ export const getGradesByStudent = async (
   for (const element of data) {
     const { graded_at, id_exam, modules, total_grade } = element;
 
-    if (modules && !Array.isArray(modules) && 'id' in modules && 'module_number' in modules) {
+    if (
+      modules &&
+      !Array.isArray(modules) &&
+      "id" in modules &&
+      "module_number" in modules
+    ) {
       const mod = modules as { id: number; module_number: number };
       grades.push({
         grade: total_grade,
