@@ -11,6 +11,7 @@ import { ProfileIndex } from "./views/profile";
 import { Password } from "./views/profile/Password";
 import { GradesScreen } from "./views/profile/Grades";
 import { Profile } from "./views/profile/Profile";
+import { ReviewExam } from "./views/profile/ReviewExam";
 
 import { NoticesScreen } from "./views/Notices";
 
@@ -31,6 +32,9 @@ import { GradesIndex } from "./views/generals/grades";
 import { GradesStudents } from "./views/generals/grades/Students";
 import { StudentGrades } from "./views/generals/grades/StudentGrades";
 import { GradesConferences } from "./views/generals/grades/Conferences";
+import { StudentModules } from "./views/generals/students/StudentModules";
+import { StudentExam } from "./views/generals/students/StudentExam";
+import { AdsScreen } from "./views/generals/AdsScreen";
 
 import { ModulesStudent } from "./views/modules";
 import { ModuleInfoStudent } from "./views/modules/module/InfoStudent";
@@ -38,9 +42,8 @@ import { ModuleStudent } from "./views/modules/module";
 import { ModuleBibliographyStudent } from "./views/modules/module/BibliographyStudent";
 import { ExamIndex } from "./views/modules/module/ExamIndex";
 import { ExamScreen } from "./views/modules/module/ExamScreen";
-import { StudentModules } from "./views/generals/students/StudentModules";
-import { StudentExam } from "./views/generals/students/StudentExam";
-import { AdsScreen } from "./views/generals/AdsScreen";
+import { TaskStudent } from "./views/modules/module/TaskStudent";
+
 import { AuthenticatedScreen } from "./views/AuthenticatedScreen";
 
 const root = document.getElementById("root")!;
@@ -61,6 +64,7 @@ ReactDOM.createRoot(root).render(
               <Route path="main" element={<Profile />} />
               <Route path="password" element={<Password />} />
               <Route path="grades" element={<GradesScreen />} />
+              <Route path="review/exam/:id" element={<ReviewExam />} />
             </Route>
             <Route path="library" element={<LibraryIndex />} />
             <Route path="library/:category" element={<CategoryScreen />} />
@@ -94,6 +98,7 @@ ReactDOM.createRoot(root).render(
                 element={<ModuleBibliographyStudent />}
               />
               <Route path="eval" element={<ExamIndex />} />
+              <Route path="task" element={<TaskStudent />} />
               <Route path="eval/:idEval" element={<ExamScreen />} />
             </Route>
           </Route>

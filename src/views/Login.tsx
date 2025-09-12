@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router";
 
 import { InputPassword } from "../components/InputPassword";
@@ -15,7 +15,11 @@ const Login = () => {
   const modalRef = useRef<ModalRef>(null);
   const [modalMsg, setModalMsg] = useState<string>("");
   const navigate = useNavigate();
-  const { loading, login } = useAuthStore();
+  const { loading, login, status } = useAuthStore();
+
+  useEffect(() => {
+    if (status === 'authenticated') navigate('/home');
+  }, [])
 
   const handleSubmit = async () => {
     const wasSuccessfull = await login(formLogin.email, formLogin.password);

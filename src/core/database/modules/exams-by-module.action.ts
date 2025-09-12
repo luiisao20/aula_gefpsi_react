@@ -46,6 +46,7 @@ export const getExamByGeneral = async (idModule: string): Promise<Exam> => {
     dueDate: dayjs(data[0].due_date),
     id: data[0].id,
     status: data[0].status,
+    review: data[0].review
   };
 
   return exam;
@@ -54,7 +55,7 @@ export const getExamByGeneral = async (idModule: string): Promise<Exam> => {
 export const updateExam = async (exam: Exam) => {
   const { error } = await supabase
     .from("exams")
-    .update({ status: exam.status, due_date: exam.dueDate })
+    .update({ status: exam.status, due_date: exam.dueDate, review: exam.review })
     .eq("id", exam.id);
 
   if (error) throw error;

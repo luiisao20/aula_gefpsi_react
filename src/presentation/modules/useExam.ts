@@ -166,6 +166,10 @@ export const useExamByStudent = (idStudent: string, idExam?: string) => {
       queryClient.invalidateQueries({
         queryKey: ["examState", idStudent, idExam],
       });
+
+      queryClient.invalidateQueries({
+        queryKey: ["examGrade", idStudent, idExam],
+      });
     },
 
     onError: (error: any) => {

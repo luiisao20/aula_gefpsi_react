@@ -25,7 +25,7 @@ export const ModulesList = ({
       case "generals":
         return `/home/generals/module/${idModule}/info`;
       case "students":
-        return `/home/module/${idModule}/exam`;
+        return `module/${idModule}/exam`;
     }
   };
 

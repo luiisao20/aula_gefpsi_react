@@ -47,7 +47,7 @@ export interface Task {
   dueDate: Dayjs | null;
   instructions: string;
   publishedDate?: Date;
-  idModule: string;
+  idModule?: string;
   status?: boolean;
 }
 
@@ -56,6 +56,7 @@ export interface Exam {
   idModule?: number;
   dueDate?: Dayjs | null;
   status?: boolean;
+  review?: boolean;
 }
 
 export interface ExamType {

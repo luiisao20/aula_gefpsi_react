@@ -167,6 +167,22 @@ export const ExamModule = () => {
                 </div>
               </div>
             </div>
+            <div>
+              <h2 className="text-base mb-4">
+                <span className="font-semibold">Revisión del examen:</span>{" "}
+                {examData.review ? "Habilitado" : "No habilitado"}
+              </h2>
+              <div className="flex gap-6 items-center">
+                <h2 className="font-semibold">Habilitar / Deshabilitar revisión:</h2>
+                <ToggleComponent
+                  id="review"
+                  checked={examData.review!}
+                  onChange={(checked) =>
+                    setExamData({ ...examData, review: checked })
+                  }
+                />
+              </div>
+            </div>
             <button
               onClick={() =>
                 examMutate.mutate({

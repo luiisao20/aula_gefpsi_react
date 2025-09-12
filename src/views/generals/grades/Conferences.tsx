@@ -9,15 +9,38 @@ import type { StudentGradeModule } from "../../../interfaces/Grades";
 import { TableStudents } from "../../../components/TableComponent";
 import { LoaderComponent } from "../../../components/SpinnerComponent";
 
+export interface Filter {
+  completed?: boolean;
+  approven?: boolean;
+}
+
+type OptionFilter =
+  | "Completados"
+  | "No completados"
+  | "Aprobadas"
+  | "No aprobadas";
+
+const optionFilters: OptionFilter[] = [
+  "Completados",
+  "No completados",
+  "Aprobadas",
+  "No aprobadas",
+];
+
 export const GradesConferences = () => {
   const [modulesData, setModulesData] = useState<Module[]>([]);
   const [gradesData, setGradesData] = useState<StudentGradeModule[]>([]);
   const [moduleData, setModuleData] = useState<Module>();
   const [selectedId, setSelectedId] = useState<number | undefined>();
+  const [filters, setFilters] = useState<Filter>({});
 
   const { moduleQuery } = useModule(selectedId?.toString());
   const { modulesQuery } = useModules();
-  const { useGrades } = useModuleGrades(moduleData?.id);
+  const { useGrades } = useModuleGrades(
+    moduleData?.id,
+    filters?.completed,
+    filters?.approven
+  );
 
   useEffect(() => {
     if (modulesQuery.data) setModulesData(modulesQuery.data);
@@ -38,6 +61,27 @@ export const GradesConferences = () => {
   useEffect(() => {
     if (moduleData?.id) useGrades.refetch();
   }, [moduleData]);
+
+  useEffect(() => {
+    if (moduleQuery.data) useGrades.refetch();
+  }, [filters]);
+
+  const handleSelectFilter = (value: OptionFilter) => {
+    switch (value) {
+      case "Aprobadas":
+        setFilters({ approven: true });
+        return;
+      case "No aprobadas":
+        setFilters({ approven: false });
+        return;
+      case "Completados":
+        setFilters({ completed: true });
+        return;
+      case "No completados":
+        setFilters({ completed: false });
+        return;
+    }
+  };
 
   return (
     <div className="my-6">
@@ -70,14 +114,38 @@ export const GradesConferences = () => {
             <span className="font-semibold">Conferencia:</span>{" "}
             {moduleData?.title}
           </h2>
+          {optionFilters.map((item, index) => (
+            <div key={index} className="flex items-center mb-4">
+              <input
+                id={`default-radio-${index}`}
+                type="radio"
+                value={item}
+                onChange={() => handleSelectFilter(item)}
+                name="default-radio"
+                className="w-4 h-4 text-primary bg-gray-100 border-gray-300 focus:ring-primary/50 focus:ring-2"
+              />
+              <label
+                htmlFor={`default-radio-${index}`}
+                className="ms-2 text-sm font-medium text-gray-900"
+              >
+                {item}
+              </label>
+            </div>
+          ))}
+          <h2 className="text-secondary font-semibold mb-6">
+            Total de registros {gradesData.length}
+          </h2>
           {useGrades.isLoading ? (
             <LoaderComponent />
           ) : (
-            <TableStudents
-              grades
-              students={gradesData}
-              idModule={moduleData.id}
-            />
+            <div>
+              <TableStudents
+                grades
+                failed={'approven' in filters! ? !filters.approven : false}
+                students={gradesData}
+                idModule={moduleData.id}
+              />
+            </div>
           )}
         </div>
       )}

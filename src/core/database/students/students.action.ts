@@ -152,7 +152,7 @@ export const getGradeByStudent = async (
     comments: data[0].comments,
     idExam: data[0].id_exam,
     totalGrade: data[0].total_grade,
-    gradedAt: data[0].grade_at,
+    gradedAt: data[0].graded_at,
     gradedBy: data[0].grade_by,
     idStudent: data[0].id_student,
   };

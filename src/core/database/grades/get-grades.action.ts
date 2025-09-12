@@ -6,20 +6,33 @@ import type {
 
 export const getGradesByModule = async (
   idModule: number,
+  completed?: boolean,
+  approven?: boolean
 ): Promise<StudentGradeModule[]> => {
   const grades: StudentGradeModule[] = [];
 
-  
-  
-  const { data, error } = await supabase.rpc("get_students_by_grade_status", {
+  const rpcParams: Record<string, any> = {
     module_id: idModule,
-    // has_grade: true
-  });
-  
-  console.log(data);
-  
-  
-  if(error) throw new Error(error.message)
+  };
+
+  if (completed !== undefined) {
+    rpcParams.has_grade = completed ? true : false;
+  } else {
+    rpcParams.has_grade = null;
+  }
+
+  if (approven !== undefined) {
+    rpcParams.approven = approven ? true : false;
+  } else {
+    rpcParams.approven = null;
+  }
+
+  const { data, error } = await supabase.rpc(
+    "get_students_by_grade_status",
+    rpcParams
+  );
+
+  if (error) throw new Error(error.message);
 
   for (const element of data) {
     grades.push({
@@ -39,41 +52,35 @@ export const getGradesByStudent = async (
 ): Promise<ModuleGrade[]> => {
   const grades: ModuleGrade[] = [];
   const { data, error } = await supabase
-    .from("exam_results")
-    .select(
-      `
-      graded_at,
-      id_exam,
-      total_grade,
-      modules (
-        id,
-        module_number
-      )
-    `
-    )
-    .eq("id_student", idStudent);
+    .rpc('get_students_grades', {user_id: idStudent})
 
   if (error) throw new Error(error.message);
 
   for (const element of data) {
-    const { graded_at, id_exam, modules, total_grade } = element;
-
-    if (
-      modules &&
-      !Array.isArray(modules) &&
-      "id" in modules &&
-      "module_number" in modules
-    ) {
-      const mod = modules as { id: number; module_number: number };
-      grades.push({
-        grade: total_grade,
-        gradedAt: graded_at,
-        idExam: id_exam,
-        idModule: mod.id,
-        module: mod.module_number,
-      });
-    }
+    grades.push({
+      grade: element.grade,
+      gradedAt: element.date,
+      idExam: element.id_exam,
+      module: element.module,
+      dueDate: element.due_date,
+      reviewExam: element.review
+    })
   }
 
   return grades;
+};
+
+export const getGradeByExam = async (
+  idStudent: string,
+  idExam: string
+): Promise<number> => {
+  const { count, error } = await supabase
+    .from("exam_results")
+    .select("id_student", { count: "exact", head: true })
+    .eq("id_student", idStudent)
+    .eq("id_exam", idExam);
+
+  if (error) throw new Error(error.message);
+
+  return count!;
 };
