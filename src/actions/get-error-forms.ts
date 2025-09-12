@@ -4,6 +4,7 @@ const regex = {
   password: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/,
   text: /^[^\s][\p{L}\p{M}\d\s.,;:!?()"'¿¡-]*[^\s]$/u,
   names: /^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ\s]+$/,
+  grade: /^(10(\.0{1,2})?|[0-9](\.[0-9]{1,2})?)$/,
 };
 
 export const updatePassword = Yup.object().shape({
@@ -68,6 +69,20 @@ export const registerForm = Yup.object().shape({
   confirmPassword: Yup.string()
     .oneOf([Yup.ref("password")], "Las contraseñas deben coincidir")
     .required("Debes repetir tu contraseña"),
+});
+
+export const gradeForm = Yup.object().shape({
+  grade: Yup.string()
+    .matches(
+      regex.grade,
+      "La calificación sólo admite números y estar entre 0 y 10"
+    )
+    .required("Debes ingresar una calificación"),
+
+  feedback: Yup.string().matches(
+    regex.text,
+    "Asegúrate de ingresa texto válido"
+  ),
 });
 
 export const buildGradesSchema = (

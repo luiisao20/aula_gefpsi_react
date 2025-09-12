@@ -25,6 +25,7 @@ export const insertStudentExamData = async (
     id_selected_option: item.idOption ?? null,
     id_exam: idExam,
     id_question_type: item.idType,
+    grade: item.grade
   }));
 
   const { error } = await supabase

@@ -1,13 +1,11 @@
 import { useEffect, useState } from "react";
 import type { Exam } from "../../../interfaces/Module";
-import {
-  useExam,
-  useExamByStudent,
-} from "../../../presentation/modules/useExam";
+import { useExam } from "../../../presentation/modules/useExam";
 import { useNavigate, useParams } from "react-router";
 import { getFormattedDate } from "../../../actions/get-date-formatted";
 import { useAuthStore } from "../../../presentation/auth/useAuthStore";
 import { LoaderComponent } from "../../../components/SpinnerComponent";
+import { useExamGrade } from "../../../presentation/grades/useGrades";
 
 export const ExamIndex = () => {
   const { id } = useParams();
@@ -16,23 +14,20 @@ export const ExamIndex = () => {
 
   const { user } = useAuthStore();
   const [examData, setExamData] = useState<Exam>();
-  const [examState, setExamState] = useState<boolean>();
+  const [examState, setExamState] = useState<number>();
 
   const { examQuery } = useExam(idModule);
-  const { examStudentQuery } = useExamByStudent(
-    user?.id!,
-    examData?.id?.toString()
-  );
+  const { gradeExamQuery } = useExamGrade(user?.id, examData?.id?.toString());
 
   useEffect(() => {
-    if (examStudentQuery.data) setExamState(examStudentQuery.data);
-  }, [examStudentQuery.data]);
+    if (gradeExamQuery.data) setExamState(gradeExamQuery.data);
+  }, [gradeExamQuery.data]);
 
   useEffect(() => {
     if (examQuery.data) setExamData(examQuery.data);
   }, [examQuery.data]);
 
-  if (examQuery.isLoading || examStudentQuery.isLoading) {
+  if (examQuery.isLoading || gradeExamQuery.isLoading) {
     return <LoaderComponent />;
   }
 
@@ -63,7 +58,7 @@ export const ExamIndex = () => {
         <span className="font-semibold">Estado: </span>
         {examData?.status ? "Habilitado" : "No habilitado"}
       </h2>
-      {examState ? (
+      {examState === 1 ? (
         <h2 className="text-center text-secondary font-semibold">
           Evaluación completada, no se admiten más intentos
         </h2>

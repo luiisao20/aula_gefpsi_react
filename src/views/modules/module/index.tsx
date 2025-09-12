@@ -1,11 +1,12 @@
+import { useEffect, useState } from "react";
 import { Outlet, useParams } from "react-router";
 import { FaHome } from "react-icons/fa";
+import { ImBooks } from "react-icons/im";
+import { HiPencilSquare } from "react-icons/hi2";
+import { BiTask } from "react-icons/bi";
 
 import { Sidebar } from "../../../components/Sidebar";
 import type { SideRoute } from "../../profile";
-import { ImBooks } from "react-icons/im";
-import { HiPencilSquare } from "react-icons/hi2";
-import { useEffect, useState } from "react";
 import type { Module } from "../../../interfaces/Module";
 import { useModule } from "../../../presentation/modules/useModules";
 
@@ -24,6 +25,11 @@ export const ModuleStudent = () => {
       name: "Bibliografía",
       route: `bibliography`,
       icon: <ImBooks size={25} />,
+    },
+    {
+      name: "Trabajos sincrónicos",
+      route: `task`,
+      icon: <BiTask size={25} />,
     },
     {
       name: "Evaluación",

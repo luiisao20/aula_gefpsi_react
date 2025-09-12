@@ -9,9 +9,6 @@ export const uploadConferenceFile = async (file: File, idModule: string) => {
       upsert: false,
     });
 
-    console.log(error);
-    
-
   if (error) throw error;
 
   const { data: urlData } = supabase.storage
@@ -32,7 +29,7 @@ export const getConferenceFile = async (
   const { data, error } = await supabase
     .from("conference_files")
     .select()
-    .eq("id_module", idModule)
+    .eq("id_module", idModule);
 
   if (error) throw new Error(error.message);
 

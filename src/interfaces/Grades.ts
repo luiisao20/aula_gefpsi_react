@@ -1,5 +1,5 @@
 export interface StudentGradeModule {
-  id: number;
+  id: string;
   email: string;
   firstName: string;
   lastName: string;
@@ -11,7 +11,9 @@ export interface StudentGradeModule {
 export interface ModuleGrade {
   grade: number;
   module: number;
-  idModule: number;
+  idModule?: number;
   idExam: number;
   gradedAt: Date;
+  dueDate?: Date;
+  reviewExam?: boolean;
 }

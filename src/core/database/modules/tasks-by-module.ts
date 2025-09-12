@@ -12,6 +12,33 @@ export const createNewTask = async (task: Task) => {
   if (error) throw error;
 };
 
+export const getTasksByModuleForStudent = async (
+  idModule: string
+): Promise<Task[]> => {
+  const tasks: Task[] = [];
+
+  const { data, error } = await supabase
+    .from("tasks")
+    .select()
+    .eq("id_module", idModule)
+    .eq("status", true);
+
+  if (error) throw error;
+
+  for (const element of data) {
+    tasks.push({
+      id: element.id,
+      dueDate: element.due_date,
+      idModule: element.id_module,
+      instructions: element.instructions,
+      publishedDate: element.published_date,
+      title: element.title,
+      status: element.status,
+    });
+  }
+  return tasks;
+};
+
 export const getTasksByModule = async (idModule: string): Promise<Task[]> => {
   const tasks: Task[] = [];
 

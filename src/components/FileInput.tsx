@@ -31,7 +31,10 @@ export const FileInput = ({ description, format, setFile }: Props) => {
           <p className="mb-2 text-base">
             <span className="font-semibold">Haz clic aquí</span> {description}
           </p>
-          <p className="text-sm">Sólo se admiten archivos tipo {format.split(',').join(' ')}</p>
+          <p className="text-sm">
+            Sólo se admiten archivos tipo {format.split(",").join(" ")}. Tamaño
+            máximo 5MB
+          </p>
         </div>
         <input
           onChange={(e) => setFile(e.target.files ? e.target.files[0] : null)}

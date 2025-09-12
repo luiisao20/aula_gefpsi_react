@@ -8,6 +8,11 @@ import { Colors } from "../assets/colors";
 import { Link } from "react-router";
 import type { ModuleGrade, StudentGradeModule } from "../interfaces/Grades";
 import { IoSearchOutline } from "react-icons/io5";
+import { ToggleComponent } from "./ToggleComponent";
+import { useEffect, useState } from "react";
+import { useEnabledUsers } from "../presentation/tasks/useEnabledUsers";
+import { useTasks } from "../presentation/modules/useTasks";
+import type { Task } from "../interfaces/Module";
 
 interface Props {
   payments: Payment[];
@@ -178,6 +183,7 @@ interface StudentsProps {
   idModule?: number;
   module?: boolean;
   search?: string;
+  failed?: boolean;
 
   onChangeSearch?: (value: string) => void;
 }
@@ -188,10 +194,25 @@ export const TableStudents = ({
   idModule,
   module,
   search,
+  failed,
 
   onChangeSearch,
 }: StudentsProps) => {
-  const goRoute = (id: number): string => {
+  const [dataUsers, setDataUsers] = useState<string[]>([]);
+
+  const { usersQuery, enableMutation } = useEnabledUsers(idModule);
+  const { tasksQuery } = useTasks(`${idModule}`);
+  const [tasksList, setTasksList] = useState<Task[]>([]);
+
+  useEffect(() => {
+    if (usersQuery.data) setDataUsers(usersQuery.data);
+  }, [usersQuery.data]);
+
+  useEffect(() => {
+    if (tasksQuery.data) setTasksList(tasksQuery.data);
+  }, [tasksQuery.data]);
+
+  const goRoute = (id: string): string => {
     if (grades) return `/home/generals/student/${id}/module/${idModule}/exam`;
     else if (module) return `/home/generals/grades/students/${id}`;
     return `/home/generals/student/${id}`;
@@ -243,6 +264,11 @@ export const TableStudents = ({
               <th scope="col" className="px-6 py-3">
                 Acción
               </th>
+              {failed && (
+                <th scope="col" className="px-6 py-3">
+                  Habilitar trabajo
+                </th>
+              )}
             </tr>
           </thead>
           <tbody>
@@ -289,6 +315,23 @@ export const TableStudents = ({
                     {grades ? "Calificar" : "Ingresar"}
                   </Link>
                 </td>
+                {failed && (
+                  <td className="px-6 py-4">
+                    <ToggleComponent
+                      loading={enableMutation.isPending}
+                      checked={dataUsers.includes(student.id!)}
+                      onChange={(value) =>
+                        enableMutation.mutate({
+                          idStudent: student.id!,
+                          value,
+                          idTask:
+                            tasksList.length > 0 ? tasksList[0].id : undefined,
+                        })
+                      }
+                      id={student.id?.toString()!}
+                    />
+                  </td>
+                )}
               </tr>
             ))}
           </tbody>
@@ -300,7 +343,7 @@ export const TableStudents = ({
 
 interface GradesProps {
   grades: ModuleGrade[];
-  idStudent?: number;
+  idStudent?: string;
 }
 
 export const TableGrades = ({ grades, idStudent }: GradesProps) => {
@@ -323,6 +366,9 @@ export const TableGrades = ({ grades, idStudent }: GradesProps) => {
                 Editar
               </th>
             )}
+            <th scope="col" className="px-6 py-3">
+              Revisión
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -348,6 +394,18 @@ export const TableGrades = ({ grades, idStudent }: GradesProps) => {
                   </Link>
                 </td>
               )}
+              <td className="px-6 py-4">
+                {item.reviewExam ? (
+                  <Link
+                    to={`/home/profile/review/exam/${item.idExam}`}
+                    className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                  >
+                    Ir
+                  </Link>
+                ) : (
+                  "No habilitado"
+                )}
+              </td>
             </tr>
           ))}
         </tbody>
