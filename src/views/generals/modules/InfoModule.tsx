@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { FaFileContract, FaVideo } from "react-icons/fa6";
 import { RiBookOpenLine } from "react-icons/ri";
@@ -23,12 +23,12 @@ import type {
   Objective,
   VideoConference,
 } from "../../../interfaces/Module";
-import {
-  ModalComponent,
-  type ModalRef,
-} from "../../../components/ModalComponent";
 import { CiTextAlignLeft } from "react-icons/ci";
 import { FileInput } from "../../../components/FileInput";
+import {
+  ModalReact,
+  type ModalReactProps,
+} from "../../../components/ModalReact";
 
 interface ModuleInfo {
   objectives: Objective[];
@@ -71,8 +71,9 @@ export const InfoModule = () => {
     url: "",
   });
   const [conferenceFile, setConferenceFile] = useState<File | null>();
-
-  const modalRef = useRef<ModalRef>(null);
+  const [modalProps, setModalProps] = useState<ModalReactProps>({
+    open: false,
+  });
 
   const {
     videoConferenceQuery,
@@ -166,7 +167,7 @@ export const InfoModule = () => {
         id: id.toString(),
         options: 3,
       });
-      modalRef.current?.show();
+      setModalProps((prev) => ({ ...prev, open: true }))
     }
   };
 
@@ -181,16 +182,15 @@ export const InfoModule = () => {
         id: id.toString(),
         options: 5,
       });
-      modalRef.current?.show();
+      setModalProps((prev) => ({ ...prev, open: true }))
     }
   };
 
   return (
     <>
-      <ModalComponent
-        onAccept={() => console.log("hello")}
-        message="El registro se borró exitosamente"
-        ref={modalRef}
+      <ModalReact
+        open={modalProps.open}
+        onClose={() => setModalProps((prev) => ({ ...prev, open: false }))}
       />
       <div
         id="accordion-flush"

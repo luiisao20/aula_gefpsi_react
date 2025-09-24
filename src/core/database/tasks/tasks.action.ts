@@ -3,25 +3,7 @@ import type { Task } from "../../../interfaces/Module";
 import type {
   Assignment,
   TaskEnabled,
-  TaskForEnable,
 } from "../../../interfaces/Tasks";
-
-export const getTasksForEnable = async (): Promise<TaskForEnable[]> => {
-  const tasks: TaskForEnable[] = [];
-  const { data, error } = await supabase.rpc("get_tasks_by_module");
-
-  if (error) throw new Error(error.message);
-
-  for (const element of data) {
-    tasks.push({
-      moduleNumber: element.module,
-      titleTask: element.title_task,
-      idTask: element.id_task,
-    });
-  }
-
-  return tasks;
-};
 
 export const gradeTask = async (
   idTask: number,

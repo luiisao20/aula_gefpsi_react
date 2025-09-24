@@ -4,6 +4,8 @@ import { MdKeyboardArrowDown } from "react-icons/md";
 import { IoPerson } from "react-icons/io5";
 
 import { initFlowbite } from "flowbite";
+import { useNotifications } from "../presentation/ads/useAds";
+import { useAuthStore } from "../presentation/auth/useAuthStore";
 
 interface Props {
   loadingLogut: boolean;
@@ -13,6 +15,9 @@ interface Props {
 }
 
 export const Navbar = ({ admin, loadingLogut, onLogout }: Props) => {
+  const { user } = useAuthStore();
+  const { queryNotification } = useNotifications(user?.id);
+
   useEffect(() => {
     initFlowbite();
   }, []);
@@ -133,12 +138,12 @@ export const Navbar = ({ admin, loadingLogut, onLogout }: Props) => {
                 Biblioteca
               </Link>
             </li> */}
-            <li>
+            <li className={queryNotification.data ? '' : 'bg-red-100 text-red-800 font-medium rounded-sm border border-red-400'}>
               <Link
                 to="notices"
                 className="block py-2 px-3 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-secondary md:p-0 "
               >
-                Avisos
+                {queryNotification.data ? "Avisos" : "Nuevos avisos"}
               </Link>
             </li>
             {admin && (

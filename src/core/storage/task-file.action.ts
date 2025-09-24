@@ -18,7 +18,7 @@ export const uploadTaskFile = async (
 
   const { data: urlData } = supabase.storage
     .from("tasks")
-    .getPublicUrl(`${uniqueSuffix}`);
+    .getPublicUrl(`task-${idTask}/${uniqueSuffix}`);
 
   const { error: dbError } = await supabase.from("student_assignments").insert({
     id_student: idStudent,

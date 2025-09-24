@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 import { useEnabledUsers } from "../presentation/tasks/useEnabledUsers";
 import { useTasks } from "../presentation/modules/useTasks";
 import type { Task } from "../interfaces/Module";
+import { MdDeleteForever } from "react-icons/md";
 
 interface Props {
   payments: Payment[];
@@ -77,9 +78,17 @@ export const TablePayments = ({ payments }: Props) => {
 
 interface NoticesProps {
   notices: Notice[];
+  general?: boolean;
+
+  onDelete?: (noticeId: number) => void;
 }
 
-export const TableNotices = ({ notices }: NoticesProps) => {
+export const TableNotices = ({
+  notices,
+  general,
+
+  onDelete = () => {},
+}: NoticesProps) => {
   return (
     <div className="relative overflow-x-auto shadow-md sm:rounded-lg mx-auto my-5">
       <table className="w-full text-sm text-left rtl:text-right text-gray-500">
@@ -97,13 +106,18 @@ export const TableNotices = ({ notices }: NoticesProps) => {
             <th scope="col" className="px-3 py-3">
               Link
             </th>
+            {general && (
+              <th scope="col" className="px-3 py-3">
+                Acción
+              </th>
+            )}
           </tr>
         </thead>
         <tbody>
           {notices.map((item) => (
             <tr key={item.id} className="bg-white border-b border-gray-200">
               <td className="px-3 py-4 whitespace-nowrap">
-                {getFormattedDate(item.date)}
+                {getFormattedDate(item.date!)}
               </td>
               <td className="px-3 py-4 font-semibold">{item.title}</td>
               <td className="px-3 py-4">
@@ -122,6 +136,15 @@ export const TableNotices = ({ notices }: NoticesProps) => {
                   </a>
                 )}
               </th>
+              {general && (
+                <td className="px-3 py-4 text-center">
+                  <MdDeleteForever
+                    onClick={() => onDelete(item.id!)}
+                    className="cursor-pointer text-danger"
+                    size={30}
+                  />
+                </td>
+              )}
             </tr>
           ))}
         </tbody>
@@ -387,7 +410,7 @@ export const TableGrades = ({ grades, idStudent }: GradesProps) => {
               {idStudent && (
                 <td className="px-6 py-4 text-right">
                   <Link
-                    to={`/generals/student/${idStudent}/module/${item.idModule}/exam`}
+                    to={`/home/generals/student/${idStudent}/module/${item.idModule}/exam`}
                     className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
                   >
                     Ir

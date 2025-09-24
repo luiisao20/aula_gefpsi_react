@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router";
 
 import type { ExamData, Option } from "../../../interfaces/Students";
 import { useQuestionsExam } from "../../../presentation/student/useExam";
-import { ModalReact } from "../../../components/ModalReact";
+import { ModalReact, type ModalReactProps } from "../../../components/ModalReact";
 import {
   useExam,
   useExamByStudent,
@@ -19,14 +19,6 @@ export interface AnswerExam {
   idType: number;
   text?: string;
   grade?: number;
-}
-
-export interface ModalReactProps {
-  open: boolean;
-  message: string;
-  warning?: boolean;
-  showButtons?: boolean;
-  loading?: boolean;
 }
 
 export const ExamScreen = () => {

@@ -2,24 +2,24 @@ import { useParams } from "react-router";
 import { useEffect, useState } from "react";
 import {
   useEnabledTasks,
-  useTasksForEnable,
+  useEnabledTasksForStudent,
 } from "../../../presentation/tasks/useTasks";
 import type {
   Assignment,
   TaskEnabled,
-  TaskForEnable,
 } from "../../../interfaces/Tasks";
 import { useUploadedTasks } from "../../../presentation/tasks/useUploadedTasks";
 import { TaskGradeComponent } from "../../../components/TaskGradeComponent";
+import type { Task } from "../../../interfaces/Module";
 
 export const StudentTasks = () => {
   const { id, idModule } = useParams();
 
-  const [dataTasks, setDataTasks] = useState<TaskForEnable[]>([]);
+  const [dataTasks, setDataTasks] = useState<Task[]>([]);
   const [dataTasksEnabled, setDataTasksEnabled] = useState<TaskEnabled[]>([]);
   const [dataAssignments, setDataAssignments] = useState<Assignment[]>([]);
 
-  const { queryTasks } = useTasksForEnable();
+  const { queryTasks } = useEnabledTasksForStudent(id!, parseInt(idModule!));
   const { queryTasksEnabled, enableMutation } = useEnabledTasks(id!);
   const { queryTasksUploaded, updateGradeMutation } = useUploadedTasks(
     id!,
@@ -54,11 +54,11 @@ export const StudentTasks = () => {
             loading={updateGradeMutation.isPending}
             key={index}
             onEnable={handleEnableTask}
-            taskEnabled={dataTasksEnabled.some((t) => t.idTask === item.idTask)}
-            assignment={assignment(item.idTask)}
+            taskEnabled={dataTasksEnabled.some((t) => t.idTask === item.id)}
+            assignment={assignment(item.id!)}
             onUpdateGrade={({ feedback, grade }) =>
               updateGradeMutation.mutate({
-                idTask: item.idTask,
+                idTask: item.id!,
                 feedback,
                 grade,
               })

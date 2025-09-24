@@ -1,25 +1,26 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router";
 
 import { InputPassword } from "../components/InputPassword";
-import { ModalComponent, type ModalRef } from "../components/ModalComponent";
 import { useAuthStore } from "../presentation/auth/useAuthStore";
 import { supabase } from "../../supabase";
+import { ModalReact, type ModalReactProps } from "../components/ModalReact";
 
 const Login = () => {
+  const navigate = useNavigate();
   const [formLogin, setFormLogin] = useState({
     email: "",
     password: "",
   });
+  const [modalProps, setModalProps] = useState<ModalReactProps>({
+    open: false,
+  });
 
-  const modalRef = useRef<ModalRef>(null);
-  const [modalMsg, setModalMsg] = useState<string>("");
-  const navigate = useNavigate();
   const { loading, login, status } = useAuthStore();
 
   useEffect(() => {
-    if (status === 'authenticated') navigate('/home');
-  }, [])
+    if (status === "authenticated") navigate("/home");
+  }, []);
 
   const handleSubmit = async () => {
     const wasSuccessfull = await login(formLogin.email, formLogin.password);
@@ -28,17 +29,21 @@ const Login = () => {
       return navigate("/home");
     }
 
-    modalRef.current?.show();
-    setModalMsg(
-      `¡Ingreso incorrecto! Correo electrónico o contraseña son inválidos. 
-      Codigo de error: ${wasSuccessfull}`
-    );
+    setModalProps((prev) => ({
+      ...prev,
+      open: true,
+      message: `¡Ingreso incorrecto! Correo electrónico o contraseña son inválidos. 
+      Codigo de error: ${wasSuccessfull}`,
+    }));
   };
 
   const handelRetrievePassword = async () => {
     if (formLogin.email.trim() === "") {
-      modalRef.current?.show();
-      setModalMsg("Ingresa un correo electrónico");
+      setModalProps((prev) => ({
+        ...prev,
+        open: true,
+        message: "Ingresa un correo electrónico",
+      }));
       return;
     }
 
@@ -47,19 +52,28 @@ const Login = () => {
     );
 
     if (error) {
-      modalRef.current?.show();
-      setModalMsg(`Ocurrió un error! ${error.message}`);
+      setModalProps((prev) => ({
+        ...prev,
+        open: true,
+        message: `Ocurrió un error! ${error.message}`,
+      }));
       return;
     }
-
-    modalRef.current?.show();
-    setModalMsg("Revisa tu correo electrónico y restaura tu contraseña");
+    setModalProps((prev) => ({
+      ...prev,
+      open: true,
+      message: "Revisa tu correo electrónico y restaura tu contraseña",
+    }));
   };
 
   return (
     <div>
       <section>
-        <ModalComponent message={modalMsg} ref={modalRef} />
+        <ModalReact
+          open={modalProps.open}
+          message={modalProps.message}
+          onClose={() => setModalProps((prev) => ({ ...prev, open: false }))}
+        />
         <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
           <div className="w-full bg-white rounded-lg shadow md:mt-0 sm:max-w-md xl:p-0">
             <div className="p-6 space-y-4 md:space-y-6 sm:p-8">

@@ -40,6 +40,14 @@ export const taskForm = Yup.object().shape({
   instructions: Yup.string().required("La descripción es un campo obligatorio"),
 });
 
+export const adForm = Yup.object().shape({
+  title: Yup.string().required("El título es un campo obligatorio"),
+
+  description: Yup.string().required("El asunto es un campo obligatorio"),
+
+  url: Yup.string()
+});
+
 export const registerForm = Yup.object().shape({
   firstName: Yup.string()
     .matches(

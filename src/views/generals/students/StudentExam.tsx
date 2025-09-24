@@ -7,8 +7,7 @@ import type { StudentAnswer, StudentGrade } from "../../../interfaces/Students";
 import { useAnswers, useGrade } from "../../../presentation/student/useStudent";
 import { useExam } from "../../../presentation/modules/useExam";
 import type { Exam } from "../../../interfaces/Module";
-import type { ModalReactProps } from "../../modules/module/ExamScreen";
-import { ModalReact } from "../../../components/ModalReact";
+import { ModalReact, type ModalReactProps } from "../../../components/ModalReact";
 import { buildGradesSchema } from "../../../actions/get-error-forms";
 
 export interface GradesByQuestion {
@@ -36,7 +35,7 @@ export const StudentExam = () => {
   }>();
   const [gradeData, setGradeData] = useState<StudentGrade | null>();
 
-  const { examQuery } = useExam(idModule!);
+  const { examGeneralQuery } = useExam(idModule!);
   const { answersQuery, answersMutation } = useAnswers(
     id!,
     examData?.id?.toString()!,
@@ -44,8 +43,8 @@ export const StudentExam = () => {
   const { gradeQuery } = useGrade(id!, examData?.id?.toString()!);
 
   useEffect(() => {
-    if (examQuery.data) setExamData(examQuery.data);
-  }, [examQuery.data]);
+    if (examGeneralQuery.data) setExamData(examGeneralQuery.data);
+  }, [examGeneralQuery.data]);
 
   useEffect(() => {
     if (gradeQuery.data) setGradeData(gradeQuery.data);

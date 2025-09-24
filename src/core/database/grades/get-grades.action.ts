@@ -1,6 +1,8 @@
 import { supabase } from "../../../../supabase";
 import type {
+  ExamTaskGrades,
   ModuleGrade,
+  StudentAverage,
   StudentGradeModule,
 } from "../../../interfaces/Grades";
 
@@ -51,8 +53,9 @@ export const getGradesByStudent = async (
   idStudent: string
 ): Promise<ModuleGrade[]> => {
   const grades: ModuleGrade[] = [];
-  const { data, error } = await supabase
-    .rpc('get_students_grades', {user_id: idStudent})
+  const { data, error } = await supabase.rpc("get_students_grades", {
+    user_id: idStudent,
+  });
 
   if (error) throw new Error(error.message);
 
@@ -63,8 +66,9 @@ export const getGradesByStudent = async (
       idExam: element.id_exam,
       module: element.module,
       dueDate: element.due_date,
-      reviewExam: element.review
-    })
+      reviewExam: element.review,
+      idModule: element.id_module,
+    });
   }
 
   return grades;
@@ -83,4 +87,68 @@ export const getGradeByExam = async (
   if (error) throw new Error(error.message);
 
   return count!;
+};
+
+export const getExamAndTaskGrades = async (
+  idStudent: string,
+  idModule: number
+): Promise<ExamTaskGrades> => {
+  const { data, error } = await supabase.rpc("get_exam_and_task_grades", {
+    student_id: idStudent,
+    module_id: idModule,
+  });
+
+  if (error) throw new Error(error.message);
+
+  return {
+    examGrade: data.exam,
+    taskGrade: data.task,
+  };
+};
+
+export const insertAverage = async (
+  grade: number,
+  idStudent: string,
+  idModule: number
+) => {
+  const { error } = await supabase
+    .from("averages")
+    .insert({ id_user: idStudent, id_module: idModule, grade: grade });
+
+  if (error) throw new Error(error.message);
+};
+
+export const getStudentAverage = async (
+  idStudent: string,
+  idModule: number
+): Promise<StudentAverage | null> => {
+  const { data, error } = await supabase
+    .from("averages")
+    .select()
+    .eq("id_user", idStudent)
+    .eq("id_module", idModule);
+
+  if (error) throw new Error(error.message);
+
+  if (data.length === 0) return null;
+
+  return {
+    grade: data[0].grade,
+    idModule: data[0].id_module,
+    idStudent: data[0].id_user,
+  };
+};
+
+export const updateStudentAverage = async (
+  grade: number,
+  idStudent: string,
+  idModule: number
+) => {
+  const { error } = await supabase
+    .from("averages")
+    .update({ grade: grade })
+    .eq("id_user", idStudent)
+    .eq("id_module", idModule);
+
+  if (error) throw new Error(error.message);
 };

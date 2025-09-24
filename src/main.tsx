@@ -28,6 +28,7 @@ import { StudentsScreen } from "./views/generals/StudentsScreen";
 import { StudentIndex } from "./views/generals/students";
 import { StudentModule } from "./views/generals/students/StudentModule";
 import { StudentTasks } from "./views/generals/students/StudentTasks";
+import { StudentRecover } from "./views/generals/students/StudentRecover";
 import { GradesIndex } from "./views/generals/grades";
 import { GradesStudents } from "./views/generals/grades/Students";
 import { StudentGrades } from "./views/generals/grades/StudentGrades";
@@ -81,6 +82,7 @@ ReactDOM.createRoot(root).render(
                 <Route path="module/:idModule" element={<StudentModule />}>
                   <Route path="exam" element={<StudentExam />} />
                   <Route path="tasks" element={<StudentTasks />} />
+                  <Route path="recover" element={<StudentRecover />} />
                 </Route>
               </Route>
               <Route path="grades" element={<GradesIndex />}>

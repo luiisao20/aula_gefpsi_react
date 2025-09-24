@@ -2,13 +2,14 @@ import { MdOutlineGrade } from "react-icons/md";
 import { Formik } from "formik";
 
 import { getFormattedDate } from "../actions/get-date-formatted";
-import type { Assignment, TaskForEnable } from "../interfaces/Tasks";
+import type { Assignment } from "../interfaces/Tasks";
 import { ToggleComponent } from "./ToggleComponent";
 import { CustomErrorMessage } from "./CustomErrorMessage";
 import { gradeForm } from "../actions/get-error-forms";
+import type { Task } from "../interfaces/Module";
 
 interface Props {
-  item: TaskForEnable;
+  item: Task;
   taskEnabled: boolean;
   assignment?: Assignment;
   loading: boolean;
@@ -40,18 +41,16 @@ export const TaskGradeComponent = ({
       <div className="shadow shadow-secondary rounded-xl p-3">
         <div className="flex justify-between gap-4">
           <div className="flex flex-col space-y-2">
-            <h2 className="font-semibold text-lg">
-              Conferencia: {item.moduleNumber}
-            </h2>
-            <h2 className="text-lg">Trabajo sincrónico: {item.titleTask}</h2>
+            <h2 className="font-semibold text-lg"></h2>
+            <h2 className="text-lg">Trabajo sincrónico: {item.title}</h2>
           </div>
           <ToggleComponent
             id={"student"}
             checked={taskEnabled}
-            onChange={(value) => onEnable(item.idTask, value)}
+            onChange={(value) => onEnable(item.id!, value)}
           />
         </div>
-        {assignment && (
+        {assignment ? (
           <div>
             <h2 className="text-lg font-semibold text-center text-secondary">
               Tarea entregada
@@ -143,6 +142,10 @@ export const TaskGradeComponent = ({
               )}
             </Formik>
           </div>
+        ) : (
+          <h2 className="text-secondary text-center font-semibold my-6">
+            La tarea aún no se encuentra subida
+          </h2>
         )}
       </div>
     </div>

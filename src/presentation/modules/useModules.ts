@@ -23,11 +23,11 @@ export const useModules = () => {
       queryClient.invalidateQueries({
         queryKey: ["modules"],
       }),
-        console.log("Modulo creado");
+      alert("Modulo creado!");
     },
 
     onError: (error) => {
-      throw error;
+      alert(error.message)
     },
   });
 

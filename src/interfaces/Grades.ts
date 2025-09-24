@@ -17,3 +17,14 @@ export interface ModuleGrade {
   dueDate?: Date;
   reviewExam?: boolean;
 }
+
+export interface ExamTaskGrades {
+  examGrade: number;
+  taskGrade: number | null;
+}
+
+export interface StudentAverage {
+  idStudent: string;
+  idModule: number;
+  grade: number;
+}

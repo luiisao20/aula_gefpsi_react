@@ -4,18 +4,7 @@ import {
   enableTaskForStudent,
   getTasksEnabledByUser,
   getTasksEnabledForStudent,
-  getTasksForEnable,
 } from "../../core/database/tasks/tasks.action";
-
-export const useTasksForEnable = () => {
-  const queryTasks = useQuery({
-    queryKey: ["tasksForEnable"],
-    queryFn: () => getTasksForEnable(),
-    staleTime: 1000 * 60 * 60,
-  });
-
-  return { queryTasks };
-};
 
 export const useEnabledTasksForStudent = (
   idStudent: string,
