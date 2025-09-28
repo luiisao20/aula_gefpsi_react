@@ -1,4 +1,5 @@
-import {BsUnion} from "react-icons/bs";
+import { BiTask } from "react-icons/bi";
+import { BsUnion } from "react-icons/bs";
 import { FaCheckSquare } from "react-icons/fa";
 import { IoIosArrowForward } from "react-icons/io";
 import { MdTask } from "react-icons/md";
@@ -152,6 +153,22 @@ export const BreadCumbComponentGrades = ({ styles }: Props) => {
             >
               <PiStudentBold className="mr-2" size={30} />
               Estudiantes
+            </NavLink>
+          </div>
+        </li>
+        <li>
+          <div className="flex items-center">
+            <IoIosArrowForward size={18} className="text-gray-400 mx-1" />
+            <NavLink
+              to={`tasks`}
+              className={({ isActive }) =>
+                `inline-flex items-center text-base font-medium text-gray-700 ${
+                  isActive && "text-secondary"
+                }`
+              }
+            >
+              <BiTask className="mr-2" size={30} />
+              Trabajos sincrónicos
             </NavLink>
           </div>
         </li>

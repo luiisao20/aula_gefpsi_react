@@ -44,6 +44,7 @@ export const getGradesByModule = async (
       urlPhoto: element.url_photo,
       grade: element.grade_numeric,
       id: element.id,
+      average: element.average,
     });
   }
   return grades;
@@ -68,6 +69,7 @@ export const getGradesByStudent = async (
       dueDate: element.due_date,
       reviewExam: element.review,
       idModule: element.id_module,
+      average: element.average ?? null,
     });
   }
 

@@ -20,6 +20,7 @@ interface Props {
   onDeleteAssignment?: (idTask: number, path: string) => void;
   onPublish?: (id: string, value: boolean) => void;
   onUploadTask?: (file: File) => void;
+  onModify?: (task: Task) => void;
 }
 
 export const TaskComponent = ({
@@ -33,6 +34,7 @@ export const TaskComponent = ({
   onDeleteAssignment = () => {},
   onPublish = () => {},
   onUploadTask = () => {},
+  onModify = () => {}
 }: Props) => {
   const [taskFile, setTaskFile] = useState<File | null>();
 
@@ -93,7 +95,9 @@ export const TaskComponent = ({
                     {getFormattedDate(assignment.gradedAt!)}
                   </h2>
                   <h2 className="font-semibold my-2">Comentarios</h2>
-                  <p className="whitespace-pre-line px-4">{assignment.feedback}</p>
+                  <p className="whitespace-pre-line px-4">
+                    {assignment.feedback}
+                  </p>
                 </div>
               )}
             </div>
@@ -119,7 +123,7 @@ export const TaskComponent = ({
             </div>
           )
         ) : (
-          <div>
+          <div className="flex flex-col">
             <h2 className="mt-2 font-semibold text-base">
               Estado de la tarea {student}
             </h2>
@@ -145,6 +149,9 @@ export const TaskComponent = ({
                 <MdDeleteForever color={Colors.danger} size={30} />
               </button>
             </div>
+            <button onClick={() => onModify(item)} className="bg-secondary place-self-center p-2 text-white font-semibold rounded-xl hover:bg-secondary/60 cursor-pointer">
+              Modificar tarea
+            </button>
           </div>
         )}
       </div>

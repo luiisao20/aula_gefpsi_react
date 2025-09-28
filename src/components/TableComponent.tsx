@@ -14,6 +14,7 @@ import { useEnabledUsers } from "../presentation/tasks/useEnabledUsers";
 import { useTasks } from "../presentation/modules/useTasks";
 import type { Task } from "../interfaces/Module";
 import { MdDeleteForever } from "react-icons/md";
+import type { StudentTask } from "../interfaces/Tasks";
 
 interface Props {
   payments: Payment[];
@@ -201,7 +202,7 @@ export const TableBooks = ({ books }: BooksProps) => {
 };
 
 interface StudentsProps {
-  students: Student[] | StudentGradeModule[];
+  students: Student[] | StudentGradeModule[] | StudentTask[];
   grades?: boolean;
   idModule?: number;
   module?: boolean;
@@ -284,6 +285,11 @@ export const TableStudents = ({
                   Calificación
                 </th>
               )}
+              {failed && (
+                <th scope="col" className="px-6 py-3">
+                  Recuperación
+                </th>
+              )}
               <th scope="col" className="px-6 py-3">
                 Acción
               </th>
@@ -330,6 +336,11 @@ export const TableStudents = ({
                     {"grade" in student ? student.grade ?? "No completado" : ""}
                   </td>
                 )}
+                {failed && (
+                  <th scope="col" className="px-6 py-3">
+                    {"average" in student ? student.average ?? "--" : ""}
+                  </th>
+                )}
                 <td className="px-6 py-4">
                   <Link
                     to={goRoute(student.id!)}
@@ -355,6 +366,100 @@ export const TableStudents = ({
                     />
                   </td>
                 )}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
+
+export const TableStudentsTasks = ({
+  students,
+  grades,
+  idModule,
+}: StudentsProps) => {
+  const goRoute = (id: string): string => {
+    return `/home/generals/student/${id}/module/${idModule}/tasks`;
+  };
+
+  return (
+    <div className="mb-10">
+      <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+        <table className="w-full text-sm text-left rtl:text-right text-gray-500">
+          <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+            <tr>
+              <th scope="col" className="px-6 py-3">
+                Estudiante
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Calificación
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Trabajo
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Calificar
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {students.map((student) => (
+              <tr
+                key={student.id}
+                className="bg-white border-b border-gray-200 hover:bg-gray-50"
+              >
+                <th
+                  scope="row"
+                  className="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap"
+                >
+                  {student.urlPhoto ? (
+                    <img
+                      className="w-10 h-10 rounded-full"
+                      src={student.urlPhoto}
+                      alt="Jese image"
+                    />
+                  ) : (
+                    <FaUserGraduate
+                      className="w-10 h-10 bg-secondary/10 rounded-full"
+                      color={Colors.secondary}
+                    />
+                  )}
+                  <div className="ps-3">
+                    <div className="text-base font-semibold">
+                      {student.lastName} {student.firstName}
+                    </div>
+                    <div className="font-normal text-gray-500">
+                      {student.email}
+                    </div>
+                  </div>
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  {"grade" in student ? student.grade ?? "--" : ""}
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  {"url" in student && (
+                    <a
+                      href={student.url}
+                      target="_blank"
+                      className={`${
+                        student.url &&
+                        "text-secondary hover:underline hover:underline-offset-2"
+                      }`}
+                    >
+                      {student.url ? "Ir" : "Trabajo no encontrado"}
+                    </a>
+                  )}
+                </th>
+                <td className="px-6 py-4">
+                  <Link
+                    to={goRoute(student.id!)}
+                    className="font-medium text-primary hover:underline"
+                  >
+                    {grades ? "Calificar" : "Ingresar"}
+                  </Link>
+                </td>
               </tr>
             ))}
           </tbody>
@@ -403,7 +508,9 @@ export const TableGrades = ({ grades, idStudent }: GradesProps) => {
               >
                 Conferencia N° {item.module}
               </th>
-              <td className="px-6 py-4 text-center">{item.grade.toFixed(2)}</td>
+              <td className="px-6 py-4 text-center">
+                {item.average ? item.average.toFixed(2) : item.grade.toFixed(2)}
+              </td>
               <td className="px-6 py-4">
                 {getFormattedDate(`${item.gradedAt}`)}
               </td>

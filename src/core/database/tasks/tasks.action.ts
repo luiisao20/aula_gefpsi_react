@@ -2,6 +2,7 @@ import { supabase } from "../../../../supabase";
 import type { Task } from "../../../interfaces/Module";
 import type {
   Assignment,
+  StudentTask,
   TaskEnabled,
 } from "../../../interfaces/Tasks";
 
@@ -155,4 +156,31 @@ export const disableTaskForStudent = async (
   if (error) throw new Error(error.message);
 
   return true;
+};
+
+export const getStudentsTasks = async (
+  idModule: number
+): Promise<StudentTask[]> => {
+  const studentTasks: StudentTask[] = [];
+
+  const { data, error } = await supabase.rpc("get_students_tasks", {
+    module_id: idModule,
+  });
+
+  if (error) throw new Error(error.message);
+
+  for (const element of data) {
+    studentTasks.push({
+      email: element.email,
+      firstName: element.first_name,
+      id: element.id,
+      lastName: element.last_name,
+      task: element.task,
+      urlPhoto: element.url_photo,
+      grade: element.grade ?? null,
+      url: element.url ?? null,
+    });
+  }
+
+  return studentTasks;
 };

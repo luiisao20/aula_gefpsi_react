@@ -5,6 +5,7 @@ import {
   getTasksByModule,
   getTasksByModuleForStudent,
   publishTask,
+  updateTask,
 } from "../../core/database/modules/tasks-by-module";
 import type { Task } from "../../interfaces/Module";
 
@@ -27,7 +28,8 @@ export const useTasks = (idModule: string) => {
   });
 
   const tasksMutation = useMutation({
-    mutationFn: async (data: Task) => createNewTask(data),
+    mutationFn: async (data: Task) =>
+      data.id ? updateTask(data) : createNewTask(data),
 
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -37,7 +39,7 @@ export const useTasks = (idModule: string) => {
 
     onError: (error: any) => {
       const message = error.response?.data?.error || "Error desconocido";
-      console.log(message);
+      alert(message);
     },
   });
 

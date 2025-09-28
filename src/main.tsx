@@ -46,6 +46,7 @@ import { ExamScreen } from "./views/modules/module/ExamScreen";
 import { TaskStudent } from "./views/modules/module/TaskStudent";
 
 import { AuthenticatedScreen } from "./views/AuthenticatedScreen";
+import {TasksGrades} from "./views/generals/grades/Tasks";
 
 const root = document.getElementById("root")!;
 
@@ -88,6 +89,7 @@ ReactDOM.createRoot(root).render(
               <Route path="grades" element={<GradesIndex />}>
                 <Route path="conferences" element={<GradesConferences />} />
                 <Route path="students" element={<GradesStudents />} />
+                <Route path="tasks" element={<TasksGrades />} />
                 <Route path="students/:id" element={<StudentGrades />} />
               </Route>
               <Route path="ads" element={<AdsScreen />} />

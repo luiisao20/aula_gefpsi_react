@@ -20,3 +20,14 @@ export interface Assignment {
   fileName: string;
   path: string;
 }
+
+export interface StudentTask {
+  firstName: string;
+  lastName: string;
+  urlPhoto: string;
+  email: string;
+  id: string;
+  task: string;
+  grade?: number;
+  url?: string;
+}

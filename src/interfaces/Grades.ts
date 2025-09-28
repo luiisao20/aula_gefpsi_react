@@ -6,6 +6,7 @@ export interface StudentGradeModule {
   state?: boolean;
   grade: number | string;
   urlPhoto: string;
+  average?: number;
 }
 
 export interface ModuleGrade {
@@ -16,6 +17,7 @@ export interface ModuleGrade {
   gradedAt: Date;
   dueDate?: Date;
   reviewExam?: boolean;
+  average?: number;
 }
 
 export interface ExamTaskGrades {

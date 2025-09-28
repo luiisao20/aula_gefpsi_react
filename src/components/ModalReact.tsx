@@ -19,6 +19,10 @@ import dayjs from "dayjs";
 import { CustomDatePicker } from "./DatePicker";
 import type { Notice } from "../interfaces/Notice";
 
+export interface ModalTaskProps extends Props {
+  taskToUpdate?: Task;
+}
+
 export interface ModalReactProps {
   open: boolean;
   message?: string;
@@ -284,10 +288,11 @@ export const ModalRTask = ({
   open,
   loading,
   moduleId,
+  taskToUpdate,
 
   onClose,
   onSendData = () => {},
-}: Props) => {
+}: ModalTaskProps) => {
   const style: SxProps<Theme> = {
     position: "absolute",
     top: "50%",
@@ -298,9 +303,10 @@ export const ModalRTask = ({
   };
 
   const task: Task = {
-    title: "",
-    dueDate: dayjs(new Date()),
-    instructions: "",
+    id: taskToUpdate?.id ?? undefined,
+    title: taskToUpdate ? taskToUpdate.title : "",
+    dueDate: taskToUpdate ? dayjs(taskToUpdate.dueDate) : dayjs(new Date()),
+    instructions: taskToUpdate ? taskToUpdate.instructions : "",
     idModule: moduleId,
   };
 
@@ -427,7 +433,9 @@ export const ModalRTask = ({
                       }`}
                     >
                       <IoMdAddCircle className="mr-4" size={20} />
-                      Agregar nueva tarea
+                      {taskToUpdate
+                        ? "Actualizar tarea"
+                        : "Agregar nueva tarea"}
                     </button>
                   </>
                 )}
@@ -498,7 +506,7 @@ export const ModalAd = ({
                 validationSchema={adForm}
                 onSubmit={async (formLike, { resetForm }) => {
                   console.log(formLike);
-                  
+
                   onSendData(formLike);
                   resetForm();
                 }}

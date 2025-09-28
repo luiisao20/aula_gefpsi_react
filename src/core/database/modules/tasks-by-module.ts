@@ -12,6 +12,20 @@ export const createNewTask = async (task: Task) => {
   if (error) throw error;
 };
 
+export const updateTask = async (task: Task) => {
+  const { error } = await supabase
+    .from("tasks")
+    .update({
+      title: task.title,
+      due_date: task.dueDate,
+      instructions: task.instructions,
+      id_module: task.idModule,
+    })
+    .eq("id", task.id);
+
+  if (error) throw new Error(error.message);
+};
+
 export const getTasksByModuleForStudent = async (
   idModule: string
 ): Promise<Task[]> => {

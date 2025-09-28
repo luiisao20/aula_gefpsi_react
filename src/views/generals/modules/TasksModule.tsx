@@ -27,6 +27,7 @@ export const TasksModule = () => {
     open: false,
     idTask: 0,
   });
+  const [taskToUpdate, setTaskToUpdate] = useState<Task>();
 
   const [modalTaskProps, setModalTaskProps] = useState<ModalReactProps>({
     open: false,
@@ -53,6 +54,7 @@ export const TasksModule = () => {
         onClose={() => setModalProps((prev) => ({ ...prev, open: false }))}
       />
       <ModalRTask
+        taskToUpdate={taskToUpdate}
         open={modalTaskProps.open}
         onClose={() => setModalTaskProps((prev) => ({ ...prev, open: false }))}
         onSendData={async (data) => {
@@ -76,6 +78,10 @@ export const TasksModule = () => {
         {tasksList.map((item, index) => (
           <TaskComponent
             key={index}
+            onModify={(task) => {
+              setTaskToUpdate(task);
+              setModalTaskProps((prev) => ({ ...prev, open: true }));
+            }}
             item={item}
             onPublish={(id, value) =>
               publishMutation.mutate({ id, published: value })
