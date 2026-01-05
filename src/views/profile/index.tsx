@@ -5,6 +5,7 @@ import type { ReactElement } from "react";
 import { RiLockPasswordFill } from "react-icons/ri";
 import { MdOutlineGrade } from "react-icons/md";
 import { useAuthStore } from "../../presentation/auth/useAuthStore";
+import {PiCertificateBold} from "react-icons/pi";
 
 export interface SideRoute {
   name: string;
@@ -28,6 +29,11 @@ export const ProfileIndex = () => {
       name: "Calificaciones",
       route: "grades",
       icon: <MdOutlineGrade size={25} />,
+    },
+    {
+      name: "Certificados",
+      route: "certificates",
+      icon: <PiCertificateBold size={25} />,
     },
   ];
 

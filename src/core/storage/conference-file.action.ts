@@ -4,7 +4,7 @@ import type { ConferenceFile } from "../../interfaces/Module";
 export const uploadConferenceFile = async (file: File, idModule: string) => {
   const { error } = await supabase.storage
     .from("conferences")
-    .upload(`files/conference-${idModule}`, file, {
+    .upload(`files/conference-${idModule}.pdf`, file, {
       cacheControl: "3600",
       upsert: false,
     });
@@ -13,7 +13,7 @@ export const uploadConferenceFile = async (file: File, idModule: string) => {
 
   const { data: urlData } = supabase.storage
     .from("conferences")
-    .getPublicUrl(`files/conference-${idModule}`);
+    .getPublicUrl(`files/conference-${idModule}.pdf`);
 
   const { error: dbError } = await supabase.from("conference_files").insert({
     url: urlData.publicUrl,
@@ -45,7 +45,7 @@ export const getConferenceFile = async (
 export const deleteConferenceFile = async (idModule: string) => {
   const { error } = await supabase.storage
     .from("conferences")
-    .remove([`files/conference-${idModule}`]);
+    .remove([`files/conference-${idModule}.pdf`]);
 
   if (error) throw new Error(error.message);
 

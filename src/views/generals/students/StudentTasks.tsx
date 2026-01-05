@@ -19,7 +19,7 @@ export const StudentTasks = () => {
   const [dataTasksEnabled, setDataTasksEnabled] = useState<TaskEnabled[]>([]);
   const [dataAssignments, setDataAssignments] = useState<Assignment[]>([]);
 
-  const { queryTasks } = useEnabledTasksForStudent(id!, parseInt(idModule!));
+  const { queryTasks } = useEnabledTasksForStudent(id!, parseInt(idModule!), true);
   const { queryTasksEnabled, enableMutation } = useEnabledTasks(id!);
   const { queryTasksUploaded, updateGradeMutation } = useUploadedTasks(
     id!,

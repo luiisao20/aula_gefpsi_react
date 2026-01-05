@@ -63,15 +63,20 @@ export const getStudentAssignments = async (
 
 export const getTasksEnabledForStudent = async (
   idStudent: string,
-  idModule: number
+  idModule: number,
+  admin?: boolean
 ): Promise<Task[]> => {
   const tasks: Task[] = [];
   const { data, error } = await supabase.rpc("get_students_tasks_enabled", {
     user_id: idStudent,
     module_id: idModule,
+    admin: admin ?? false,
   });
 
   if (error) throw new Error(error.message);
+
+  console.log(data);
+  
 
   for (const element of data) {
     tasks.push({

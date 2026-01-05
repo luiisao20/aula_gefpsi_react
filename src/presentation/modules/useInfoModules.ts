@@ -309,7 +309,7 @@ export const useFileByModule = (idModule: string) => {
     },
     onError: (error: any) => {
       const message = error.response?.data?.error || "Error desconocido";
-      console.log(message);
+      alert(message);
     },
   });
 

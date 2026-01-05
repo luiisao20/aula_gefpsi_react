@@ -8,11 +8,12 @@ import {
 
 export const useEnabledTasksForStudent = (
   idStudent: string,
-  idModule: number
+  idModule: number,
+  admin?: boolean
 ) => {
   const queryTasks = useQuery({
     queryKey: ["tasksForStudent", idStudent, idModule],
-    queryFn: () => getTasksEnabledForStudent(idStudent, idModule),
+    queryFn: () => getTasksEnabledForStudent(idStudent, idModule, admin),
     staleTime: 1000 * 60 * 60,
   });
 

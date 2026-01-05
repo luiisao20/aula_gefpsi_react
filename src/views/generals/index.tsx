@@ -4,6 +4,7 @@ import { IoIosCreate } from "react-icons/io";
 import { PiStudentBold } from "react-icons/pi";
 import { MdOutlineGrade } from "react-icons/md";
 import { TiWarningOutline } from "react-icons/ti";
+import { PiCertificateBold } from "react-icons/pi";
 
 import type { SideRoute } from "../profile";
 import { Sidebar } from "../../components/Sidebar";
@@ -30,6 +31,11 @@ export const GeneralScreen = () => {
       route: "/home/generals/ads",
       icon: <TiWarningOutline size={25} />,
     },
+    {
+      name: 'Certificados',
+      route: '/home/generals/certificates',
+      icon: <PiCertificateBold size={25} />
+    }
   ];
   return (
     <>
