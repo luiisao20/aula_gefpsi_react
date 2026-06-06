@@ -41,9 +41,9 @@ export const CertificatesStudent = () => {
                 >
                   {item.type === "approval"
                     ? "Aprobación"
-                    : item.type === "accreditation"
-                    ? "Acreditacion"
-                    : ""}
+                      : item.type === "latin"
+                        ? "Latinoamericano"
+                        : "Nacional"}
                 </th>
                 <td className="px-6 py-4">
                   <a

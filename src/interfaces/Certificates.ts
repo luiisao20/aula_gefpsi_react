@@ -14,5 +14,5 @@ export interface StudentCertificate {
   id: string;
   fileName: string;
   url: string;
-  type: "approval" | "accreditation" | "other" ;
+  type: "approval" | "accreditation" | "latin" | "other" ;
 }

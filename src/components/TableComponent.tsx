@@ -9,10 +9,8 @@ import { Link } from "react-router";
 import type { ModuleGrade, StudentGradeModule } from "../interfaces/Grades";
 import { IoSearchOutline } from "react-icons/io5";
 import { ToggleComponent } from "./ToggleComponent";
-import { useEffect, useState } from "react";
 import { useEnabledUsers } from "../presentation/tasks/useEnabledUsers";
 import { useTasks } from "../presentation/modules/useTasks";
-import type { Task } from "../interfaces/Module";
 import { MdDeleteForever } from "react-icons/md";
 import type { StudentTask } from "../interfaces/Tasks";
 
@@ -222,19 +220,11 @@ export const TableStudents = ({
 
   onChangeSearch,
 }: StudentsProps) => {
-  const [dataUsers, setDataUsers] = useState<string[]>([]);
-
   const { usersQuery, enableMutation } = useEnabledUsers(idModule);
   const { tasksQuery } = useTasks(`${idModule}`);
-  const [tasksList, setTasksList] = useState<Task[]>([]);
 
-  useEffect(() => {
-    if (usersQuery.data) setDataUsers(usersQuery.data);
-  }, [usersQuery.data]);
-
-  useEffect(() => {
-    if (tasksQuery.data) setTasksList(tasksQuery.data);
-  }, [tasksQuery.data]);
+  const dataUsers = usersQuery.data ?? [];
+  const tasksList = tasksQuery.data ?? [];
 
   const goRoute = (id: string): string => {
     if (grades) return `/home/generals/student/${id}/module/${idModule}/exam`;

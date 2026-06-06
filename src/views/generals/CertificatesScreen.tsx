@@ -96,6 +96,7 @@ export const CertificatesScreen = () => {
       </div>
 
       <button
+        // onClick={() => certificatesMutation.mutate()}
         onClick={() => certificatesMutation.mutate(studentCertificates)}
         disabled={certificatesMutation.isPending}
         className={`bg-primary p-4 rounded-xl font-semibold text-white cursor-pointer ${

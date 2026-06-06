@@ -19,6 +19,7 @@ export const useCertificates = () => {
   });
 
   const certificatesMutation = useMutation({
+    // mutationFn: () => updateLatinCertificatesUrl(),
     mutationFn: (data: StudentCertificates[]) => insertDataCertificates(data),
 
     onSuccess: () => {

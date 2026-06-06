@@ -6,7 +6,7 @@ export const getFileCertificates = async (): Promise<FileCertificate[]> => {
 
   const { data, error } = await supabase.storage
     .from("certificates")
-    .list("approval", { sortBy: { column: "name", order: "asc" } });
+    .list("new-national", { sortBy: { column: "name", order: "asc" } });
 
   if (error) throw new Error(error.message);
 
